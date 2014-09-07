@@ -306,17 +306,17 @@ pg = expandGrid(proc=&quot;min&quot;)
 eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 2)
 </code></pre>
 
-<pre><code>## [1] &quot;Estimated replications per hour:  46603377&quot;
+<pre><code>## [1] &quot;Estimated replications per hour:  45964975&quot;
 </code></pre>
 
 <pre><code class="r">as.data.frame(eg)
 </code></pre>
 
 <pre><code>##   i j   fun  n mean proc replication      V1
-## 1 1 1 rnorm 10    1  min           1 -1.8868
-## 2 1 1 rnorm 10    1  min           2 -0.2162
-## 3 2 1 rnorm 10    2  min           1  1.1137
-## 4 2 1 rnorm 10    2  min           2 -0.2915
+## 1 1 1 rnorm 10    1  min           1 -1.2184
+## 2 1 1 rnorm 10    1  min           2 -0.4660
+## 3 2 1 rnorm 10    2  min           1  0.4515
+## 4 2 1 rnorm 10    2  min           2  1.2188
 </code></pre>
 
 <p>As you can see, the function always estimates the number of replications that can be
@@ -333,19 +333,19 @@ be explained earlier.</p>
 <pre><code class="r">eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 3)
 </code></pre>
 
-<pre><code>## [1] &quot;Estimated replications per hour:  65936656&quot;
+<pre><code>## [1] &quot;Estimated replications per hour:  63621465&quot;
 </code></pre>
 
 <pre><code class="r">as.data.frame(eg)
 </code></pre>
 
-<pre><code>##   i j   fun  n mean proc replication        V1
-## 1 1 1 rnorm 10    1  min           1 -0.796761
-## 2 1 1 rnorm 10    1  min           2  0.326203
-## 3 1 1 rnorm 10    1  min           3  0.001561
-## 4 2 1 rnorm 10    2  min           1  0.616080
-## 5 2 1 rnorm 10    2  min           2  1.113323
-## 6 2 1 rnorm 10    2  min           3  0.707180
+<pre><code>##   i j   fun  n mean proc replication       V1
+## 1 1 1 rnorm 10    1  min           1 -0.84983
+## 2 1 1 rnorm 10    1  min           2 -0.30407
+## 3 1 1 rnorm 10    1  min           3 -0.69947
+## 4 2 1 rnorm 10    2  min           1  0.18862
+## 5 2 1 rnorm 10    2  min           2  2.09672
+## 6 2 1 rnorm 10    2  min           3 -0.06292
 </code></pre>
 
 <h2>Parameter <em>discardGeneratedData</em></h2>
@@ -361,7 +361,7 @@ Confer command line 11 in the pseudo code.</p>
 <pre><code class="r">eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000)
 </code></pre>
 
-<pre><code>## [1] &quot;Estimated replications per hour:  88722438&quot;
+<pre><code>## [1] &quot;Estimated replications per hour:  89857617&quot;
 </code></pre>
 
 <pre><code class="r">object.size(eg)
@@ -374,7 +374,7 @@ Confer command line 11 in the pseudo code.</p>
     discardGeneratedData = TRUE)
 </code></pre>
 
-<pre><code>## [1] &quot;Estimated replications per hour:  54333490&quot;
+<pre><code>## [1] &quot;Estimated replications per hour:  54161400&quot;
 </code></pre>
 
 <pre><code class="r">object.size(eg)
@@ -403,7 +403,7 @@ but for demonstration purpose we do this here.</p>
   |================================                                 |  50%
   |                                                                       
   |=================================================================| 100%
-## [1] &quot;Estimated replications per hour:  30909916&quot;
+## [1] &quot;Estimated replications per hour:  30783882&quot;
 </code></pre>
 
 <p>The progress bar increases every time a new element is chosen in
@@ -420,38 +420,38 @@ eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000,
     summary.fun=mean)
 </code></pre>
 
-<pre><code>## [1] &quot;Estimated replications per hour:  24111623&quot;
+<pre><code>## [1] &quot;Estimated replications per hour:  23988241&quot;
 </code></pre>
 
 <pre><code class="r">as.data.frame(eg)
 </code></pre>
 
 <pre><code>##   i j   fun  n proc value      V1
-## 1 1 1 runif 10  min (all) 0.08856
-## 2 1 2 runif 10  max (all) 0.91223
-## 3 2 1 runif 20  min (all) 0.04599
-## 4 2 2 runif 20  max (all) 0.95504
-## 5 3 1 runif 30  min (all) 0.03271
-## 6 3 2 runif 30  max (all) 0.96589
+## 1 1 1 runif 10  min (all) 0.08918
+## 2 1 2 runif 10  max (all) 0.90866
+## 3 2 1 runif 20  min (all) 0.04831
+## 4 2 2 runif 20  max (all) 0.95315
+## 5 3 1 runif 30  min (all) 0.03003
+## 6 3 2 runif 30  max (all) 0.96762
 </code></pre>
 
 <pre><code class="r">eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000, 
     summary.fun=c(mean, sd))
 </code></pre>
 
-<pre><code>## [1] &quot;Estimated replications per hour:  21005391&quot;
+<pre><code>## [1] &quot;Estimated replications per hour:  20777624&quot;
 </code></pre>
 
 <pre><code class="r">as.data.frame(eg)
 </code></pre>
 
 <pre><code>##   i j   fun  n proc value V1_mean   V1_sd
-## 1 1 1 runif 10  min (all) 0.09363 0.08846
-## 2 1 2 runif 10  max (all) 0.90637 0.08642
-## 3 2 1 runif 20  min (all) 0.04646 0.04339
-## 4 2 2 runif 20  max (all) 0.95163 0.04580
-## 5 3 1 runif 30  min (all) 0.03173 0.03009
-## 6 3 2 runif 30  max (all) 0.96603 0.03234
+## 1 1 1 runif 10  min (all) 0.09156 0.08424
+## 2 1 2 runif 10  max (all) 0.91189 0.08482
+## 3 2 1 runif 20  min (all) 0.04804 0.04491
+## 4 2 2 runif 20  max (all) 0.95258 0.04553
+## 5 3 1 runif 30  min (all) 0.03346 0.03256
+## 6 3 2 runif 30  max (all) 0.96631 0.03090
 </code></pre>
 
 <p>Note, by specifying the parameter <em>summary.fun</em> the generated data sets
@@ -471,7 +471,7 @@ eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000,
     summary.fun=mean)
 </code></pre>
 
-<pre><code>## [1] &quot;Estimated replications per hour:  23493406&quot;
+<pre><code>## [1] &quot;Estimated replications per hour:  23344595&quot;
 </code></pre>
 
 <pre><code class="r">as.data.frame(eg)
@@ -491,7 +491,7 @@ eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000,
 eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000)
 </code></pre>
 
-<pre><code>## [1] &quot;Estimated replications per hour:  40227558&quot;
+<pre><code>## [1] &quot;Estimated replications per hour:  40397066&quot;
 </code></pre>
 
 <pre><code class="r"># summarize the result objects by as.data.frame
@@ -517,7 +517,7 @@ next section.</p>
     ncpus=2, summary.fun=mean)
 </code></pre>
 
-<pre><code>## [1] &quot;Estimated replications per hour:  116921&quot;
+<pre><code>## [1] &quot;Estimated replications per hour:  108956&quot;
 </code></pre>
 
 <pre><code class="r">as.data.frame(eg)
@@ -557,7 +557,7 @@ eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 10,
     cluster=cl, summary.fun=mean)
 </code></pre>
 
-<pre><code>## [1] &quot;Estimated replications per hour:  124597&quot;
+<pre><code>## [1] &quot;Estimated replications per hour:  125080&quot;
 </code></pre>
 
 <pre><code class="r">as.data.frame(eg)
@@ -641,7 +641,7 @@ eg = evalGrids(dg, pg, replications=10, ncpus=2,
     clusterGlobalObjects=c(&quot;ratio&quot;))
 </code></pre>
 
-<pre><code>## [1] &quot;Estimated replications per hour:  121319&quot;
+<pre><code>## [1] &quot;Estimated replications per hour:  251086&quot;
 </code></pre>
 
 <p>Of course, it is possible to set <em>clusterGlobalObjects=ls()</em>, but then 
@@ -727,12 +727,12 @@ someFunc = function(){
 someFunc()
 </code></pre>
 
-<pre><code>## [1] &quot;Estimated replications per hour:  5498723&quot;
+<pre><code>## [1] &quot;Estimated replications per hour:  5657360&quot;
 ##   i j   fun   n    proc replication     V1    10%
 ## 1 1 1 runif 100 summary           1 0.2684     NA
 ## 2 1 2 runif 100       g           1     NA 0.1277
 ## --------------------------------------------------
-## [1] &quot;Estimated replications per hour:  11768896&quot;
+## [1] &quot;Estimated replications per hour:  11430351&quot;
 ##   i j   fun   n    proc replication     sd   mean    10%
 ## 1 1 1 runif 100 summary           1 0.2689 0.5157     NA
 ## 2 1 2 runif 100       g           1     NA     NA 0.1515
@@ -757,7 +757,7 @@ pg = rbind.fill(
 <pre><code class="r">eg = evalGrids(dg, pg, replications=100)
 </code></pre>
 
-<pre><code>## [1] &quot;Estimated replications per hour:  4541761&quot;
+<pre><code>## [1] &quot;Estimated replications per hour:  4600376&quot;
 </code></pre>
 
 <p>The returned object is a <em>list</em> of class <em>evalGrid</em>:</p>
@@ -835,7 +835,7 @@ the result objects. We exemplify this by calculating linear regression models.</
   replications=100)
 </code></pre>
 
-<pre><code>## [1] &quot;Estimated replications per hour:  1001528&quot;
+<pre><code>## [1] &quot;Estimated replications per hour:  1019799&quot;
 </code></pre>
 
 <pre><code class="r">class(eg$simulation[[1]][[1]]$results[[1]])

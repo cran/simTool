@@ -1,4 +1,31 @@
-Version 1.0.
+Version 1.0.2
+=========================
+
+New Features:
+
+* The convenient function meanAndNormCI added
+
+Misc:
+
+* Two parameter renamed (post.proc to summary.fun and value.fun to convert.result.fun). 
+  Of course, renaming parameters is one of the worst things one can do. On the other
+  hand, only very few users will be affected by these changes.
+
+
+Version 1.0.1
+=========================
+
+New Features:
+
+* summarizing functions process also logical results (not only numeric)
+
+Misc:
+
+* HTML vignette (LaTeX not necessary anymore)
+* additional documentation  (static pdf in JSS style)
+
+
+Version 1.0
 =========================
 
 Initial release

@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Introduction</title>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h1>Introduction</h1>
+
+<p>The purpose of the <em>simTool</em> package is to disengage the research from any kind
+of administrative source code which is usually an annoying necessity of a 
+simulation study.</p>
+
+<p>This vignette will give an introduction into the <em>simTool</em> package mainly by
+examples of growing complexity. The workhorse is the function <em>evalGrids</em>. Every
+parameter of this function will be discussed briefly and the functionality is
+illustrated by at least one example.</p>
+
+<h1>Workflow</h1>
+
+<p>The workflow is quite easy and natural. One defines two <em>data.frames</em>, the first
+one represents the functions that generate the data sets and the second one represents
+the functions that analyze the data. These two <em>data.frames</em> are passed to
+<em>evalGrids</em> which conducts the simulation. Afterwards, the results can nicely
+be displayed as a <em>data.frame</em> be coercing the object returned by <em>evalGrids</em>
+to a <em>data.frame</em>.</p>
+
+<h1>Defining the <em>data.frames</em> for data generation and analyzation</h1>
+
+<p>There are 3 rules:</p>
+
+<ul>
+<li>the first column ( a <em>character</em> vector) defines the functions to be called</li>
+<li>the other columns are the parameters that are passed to function specified in the first column</li>
+<li>The entry <em>NA</em> will not be passed to the function specified in the first column.</li>
+</ul>
+
+<p>The function <em>expandGrid</em> is a convenient function for defining such <em>data.frames</em>.</p>
+
+<p>We now define the data generation functions for our first simulation.</p>
+
+<pre><code class="r">library(simTool)
+library(plyr)
+library(reshape)
+</code></pre>
+
+<pre><code>## 
+## Attaching package: &#39;reshape&#39;
+## 
+## The following objects are masked from &#39;package:plyr&#39;:
+## 
+##     rename, round_any
+</code></pre>
+
+<pre><code class="r">print(dg &lt;- rbind.fill(
+  expandGrid(fun=&quot;rexp&quot;, n=c(10, 20), rate=1:2),
+  expandGrid(fun=&quot;rnorm&quot;, n=c(10, 20), mean=1:2)))
+</code></pre>
+
+<pre><code>##     fun  n rate mean
+## 1  rexp 10    1   NA
+## 2  rexp 20    1   NA
+## 3  rexp 10    2   NA
+## 4  rexp 20    2   NA
+## 5 rnorm 10   NA    1
+## 6 rnorm 20   NA    1
+## 7 rnorm 10   NA    2
+## 8 rnorm 20   NA    2
+</code></pre>
+
+<p>This <em>data.frame</em> represents 8 <em>R</em>-functions. For instance, the second
+row represents a function that generates 20 exponential distributed random variables
+with <em>rate</em> 1. Since <em>mean=NA</em> in the second row, this parameter is
+not passed to <em>rexp</em>.</p>
+
+<p>Similar, we define the <em>data.frame</em> for data analyzing functions.</p>
+
+<pre><code class="r">print(pg&lt;-rbind.fill(
+  expandGrid(proc=&quot;min&quot;),
+  expandGrid(proc=&quot;mean&quot;, trim=c(0.1, 0.2))))
+</code></pre>
+
+<pre><code>##   proc trim
+## 1  min   NA
+## 2 mean  0.1
+## 3 mean  0.2
+</code></pre>
+
+<p>Hence, this <em>data.frame</em> represents 3 <em>R</em>-functions i.e. calculating the
+minimum and the arithmetic mean with <em>trim=0.1</em> and <em>trim=0.2</em>.</p>
+
+<h1>The workhorse <em>evalGrids</em></h1>
+
+<p>The workhorse <em>evalGrids</em> has the following simplified pseudo code:</p>
+
+<pre><code class="r">1.  convert dg to R-functions  {g_1, ..., g_k} 
+2.  convert pg to R-functions  {f_1, ..., f_L} 
+3.  initialize result object 
+4.  append dg and pg to the result object 
+5.  t1 = current.time() 
+6.  for g in  {g_1, ..., g_k} 
+7.      for r in 1:replications (optionally in a parallel manner) 
+8.          data = g() 
+9.          for f in  {f_1, \ldots, f_L} 
+10.             append f(data) to the result object 
+11.         optionally append data to the result object 
+12.      optionally summarize the result object over all  
+         replications but separately for f_1, ..., f_L
+13.     optionally save the results so far obtained to HDD  
+14. t2 = current.time() 
+15. Estimate the number of replications per hour from t1 and t2 
+</code></pre>
+
+<p>In general, the object returned by <em>evalGrids</em> is a <em>list</em>
+of class <em>evalGrid</em> and can be coerced into 
+a <em>data.frame</em>. Later on, we will investigate the case if this is
+not the case.</p>
+
+<pre><code class="r">dg = expandGrid(fun=&quot;rnorm&quot;, n=10, mean=1:2)
+pg = expandGrid(proc=&quot;min&quot;)
+eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 2)
+</code></pre>
+
+<pre><code>## [1] &quot;Estimated replications per hour:  46603377&quot;
+</code></pre>
+
+<pre><code class="r">as.data.frame(eg)
+</code></pre>
+
+<pre><code>##   i j   fun  n mean proc replication      V1
+## 1 1 1 rnorm 10    1  min           1 -1.8868
+## 2 1 1 rnorm 10    1  min           2 -0.2162
+## 3 2 1 rnorm 10    2  min           1  1.1137
+## 4 2 1 rnorm 10    2  min           2 -0.2915
+</code></pre>
+
+<p>As you can see, the function always estimates the number of replications that can be
+done in one hour. </p>
+
+<p>The object returned by <em>evalGrids</em> will be discussed at the
+end of this section. But specific points about this object will
+be explained earlier.</p>
+
+<h2>Parameter <em>replications</em></h2>
+
+<p>Of course, this parameter controls the number of replications conducted.</p>
+
+<pre><code class="r">eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 3)
+</code></pre>
+
+<pre><code>## [1] &quot;Estimated replications per hour:  65936656&quot;
+</code></pre>
+
+<pre><code class="r">as.data.frame(eg)
+</code></pre>
+
+<pre><code>##   i j   fun  n mean proc replication        V1
+## 1 1 1 rnorm 10    1  min           1 -0.796761
+## 2 1 1 rnorm 10    1  min           2  0.326203
+## 3 1 1 rnorm 10    1  min           3  0.001561
+## 4 2 1 rnorm 10    2  min           1  0.616080
+## 5 2 1 rnorm 10    2  min           2  1.113323
+## 6 2 1 rnorm 10    2  min           3  0.707180
+</code></pre>
+
+<h2>Parameter <em>discardGeneratedData</em></h2>
+
+<p><em>evalGrids</em> saves ALL generated data sets.
+In general, it is sometimes very handy to
+have the data sets in order to investigate unusual or unexpected results.
+But saving the generated data sets can be very memory consuming.
+Stop saving the generated data sets can be obtained by setting 
+<em>discardGeneratedData = TRUE</em>.
+Confer command line 11 in the pseudo code.</p>
+
+<pre><code class="r">eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000)
+</code></pre>
+
+<pre><code>## [1] &quot;Estimated replications per hour:  88722438&quot;
+</code></pre>
+
+<pre><code class="r">object.size(eg)
+</code></pre>
+
+<pre><code>## 1240224 bytes
+</code></pre>
+
+<pre><code class="r">eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000,
+    discardGeneratedData = TRUE)
+</code></pre>
+
+<pre><code>## [1] &quot;Estimated replications per hour:  54333490&quot;
+</code></pre>
+
+<pre><code class="r">object.size(eg)
+</code></pre>
+
+<pre><code>## 904384 bytes
+</code></pre>
+
+<p>The object returned by <em>evalGrids</em> will be discussed at the
+end of this vignette.</p>
+
+<h2>Parameter <em>progress</em></h2>
+
+<p>This parameter activates a text progress bar in the console. Usually,
+this does not make sense if one uses <em>Sweave</em> or <em>knitr</em>,
+but for demonstration purpose we do this here.</p>
+
+<pre><code class="r">eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 10,
+    progress = TRUE)
+</code></pre>
+
+<pre><code>## 
+  |                                                                       
+  |                                                                 |   0%
+  |                                                                       
+  |================================                                 |  50%
+  |                                                                       
+  |=================================================================| 100%
+## [1] &quot;Estimated replications per hour:  30909916&quot;
+</code></pre>
+
+<p>The progress bar increases every time a new element is chosen in
+command line 6 of the pseudo code.</p>
+
+<h2>Parameter <em>summary.fun</em></h2>
+
+<p>As stated in command line 12 we can summarize the result objects over 
+all replications but separately for all data analyzing functions.</p>
+
+<pre><code class="r">dg = expandGrid(fun=&quot;runif&quot;, n=c(10,20,30))
+pg = expandGrid(proc=c(&quot;min&quot;, &quot;max&quot;))
+eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000, 
+    summary.fun=mean)
+</code></pre>
+
+<pre><code>## [1] &quot;Estimated replications per hour:  24111623&quot;
+</code></pre>
+
+<pre><code class="r">as.data.frame(eg)
+</code></pre>
+
+<pre><code>##   i j   fun  n proc value      V1
+## 1 1 1 runif 10  min (all) 0.08856
+## 2 1 2 runif 10  max (all) 0.91223
+## 3 2 1 runif 20  min (all) 0.04599
+## 4 2 2 runif 20  max (all) 0.95504
+## 5 3 1 runif 30  min (all) 0.03271
+## 6 3 2 runif 30  max (all) 0.96589
+</code></pre>
+
+<pre><code class="r">eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000, 
+    summary.fun=c(mean, sd))
+</code></pre>
+
+<pre><code>## [1] &quot;Estimated replications per hour:  21005391&quot;
+</code></pre>
+
+<pre><code class="r">as.data.frame(eg)
+</code></pre>
+
+<pre><code>##   i j   fun  n proc value V1_mean   V1_sd
+## 1 1 1 runif 10  min (all) 0.09363 0.08846
+## 2 1 2 runif 10  max (all) 0.90637 0.08642
+## 3 2 1 runif 20  min (all) 0.04646 0.04339
+## 4 2 2 runif 20  max (all) 0.95163 0.04580
+## 5 3 1 runif 30  min (all) 0.03173 0.03009
+## 6 3 2 runif 30  max (all) 0.96603 0.03234
+</code></pre>
+
+<p>Note, by specifying the parameter <em>summary.fun</em> the generated data sets
+and all individual result objects are discarded. In this example we discard
+\(3 \times 1000\) data sets and \(3 \times 1000 \times 2\) individual result
+objects. Although the function <em>as.data.frame</em> or to be more precise
+<em>as.data.frame.evalGrid</em> has also a parameter <em>summary.fun</em> that
+serves the same purpose, it may be necessary to summarize the results as soon
+as possible to spare memory. </p>
+
+<p>We now briefly show that <em>summary.fun</em> in <em>evalGrids</em> and
+<em>as.data.frame</em> yield the same results.</p>
+
+<pre><code class="r">set.seed(1234)
+# summarize the result objects as soon as possible
+eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000, 
+    summary.fun=mean)
+</code></pre>
+
+<pre><code>## [1] &quot;Estimated replications per hour:  23493406&quot;
+</code></pre>
+
+<pre><code class="r">as.data.frame(eg)
+</code></pre>
+
+<pre><code>##   i j   fun  n proc value      V1
+## 1 1 1 runif 10  min (all) 0.09211
+## 2 1 2 runif 10  max (all) 0.90852
+## 3 2 1 runif 20  min (all) 0.04986
+## 4 2 2 runif 20  max (all) 0.95271
+## 5 3 1 runif 30  min (all) 0.03026
+## 6 3 2 runif 30  max (all) 0.96821
+</code></pre>
+
+<pre><code class="r">set.seed(1234)
+# keeping the result objects
+eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000)
+</code></pre>
+
+<pre><code>## [1] &quot;Estimated replications per hour:  40227558&quot;
+</code></pre>
+
+<pre><code class="r"># summarize the result objects by as.data.frame
+as.data.frame(eg, summary.fun=mean)
+</code></pre>
+
+<pre><code>##   i j   fun  n proc value      V1
+## 1 1 1 runif 10  min (all) 0.09211
+## 2 1 2 runif 10  max (all) 0.90852
+## 3 2 1 runif 20  min (all) 0.04986
+## 4 2 2 runif 20  max (all) 0.95271
+## 5 3 1 runif 30  min (all) 0.03026
+## 6 3 2 runif 30  max (all) 0.96821
+</code></pre>
+
+<h2>Parameter <em>ncpus</em> and <em>clusterSeed</em></h2>
+
+<p>By specifying <em>ncpus</em> larger than 1 a cluster objected is created
+for the user and passed to the parameter <em>cluster</em> discussed in the
+next section.</p>
+
+<pre><code class="r">eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 10, 
+    ncpus=2, summary.fun=mean)
+</code></pre>
+
+<pre><code>## [1] &quot;Estimated replications per hour:  116921&quot;
+</code></pre>
+
+<pre><code class="r">as.data.frame(eg)
+</code></pre>
+
+<pre><code>##   i j   fun  n proc value      V1
+## 1 1 1 runif 10  min (all) 0.08837
+## 2 1 2 runif 10  max (all) 0.91211
+## 3 2 1 runif 20  min (all) 0.06557
+## 4 2 2 runif 20  max (all) 0.94724
+## 5 3 1 runif 30  min (all) 0.03624
+## 6 3 2 runif 30  max (all) 0.96856
+</code></pre>
+
+<p>As it is stated in command line 6, the replications are parallelized. In our case, this means
+that roughly every CPU conducts 5 replications.</p>
+
+<p>The parameter <em>clusterSeed</em> must be an integer vector of length 6 and
+serves the same purpose as the function <em>set.seed</em>. By default,
+<em>clusterSeed</em> equals <em>rep(12345, 6)</em>. Note, in order
+to reproduce the simulation study it is also necessary that <em>ncpus</em>
+does not change.</p>
+
+<h2>Parameter <em>cluster</em></h2>
+
+<p>The user can create a cluster on its own. This also enables the user
+to distribute the replications over different computers in a network.</p>
+
+<pre><code class="r">require(parallel)
+</code></pre>
+
+<pre><code>## Loading required package: parallel
+</code></pre>
+
+<pre><code class="r">cl = makeCluster(rep(&quot;localhost&quot;, 2), type=&quot;PSOCK&quot;) 
+eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 10, 
+    cluster=cl, summary.fun=mean)
+</code></pre>
+
+<pre><code>## [1] &quot;Estimated replications per hour:  124597&quot;
+</code></pre>
+
+<pre><code class="r">as.data.frame(eg)
+</code></pre>
+
+<pre><code>##   i j   fun  n proc value      V1
+## 1 1 1 runif 10  min (all) 0.08837
+## 2 1 2 runif 10  max (all) 0.91211
+## 3 2 1 runif 20  min (all) 0.06557
+## 4 2 2 runif 20  max (all) 0.94724
+## 5 3 1 runif 30  min (all) 0.03624
+## 6 3 2 runif 30  max (all) 0.96856
+</code></pre>
+
+<pre><code class="r">stopCluster(cl)
+</code></pre>
+
+<p>As you can see our cluster consists of 3 workers. Hence, this reproduces the
+results from the last code chunk above. Further note, if the user starts the
+cluster, the user also has to stop the cluster. A cluster that is created
+within <em>evalGrids</em> by specifying <em>ncpus</em> is also stop within
+<em>evalGrids</em>.</p>
+
+<h2>Parameter <em>clusterLibraries</em> and <em>clusterGlobalObjects</em></h2>
+
+<p>A newly created cluster is &ldquo;empty&#39;&#39;. Hence, if the simulation study requires
+libraries or objects from the global environment, they must be transferred to 
+the cluster.</p>
+
+<p>Lets look at standard example from the <em>boot</em> package.</p>
+
+<pre><code class="r">library(boot)
+ratio &lt;- function(d, w) sum(d$x * w)/sum(d$u * w)
+city.boot &lt;- boot(city, ratio, R = 999, stype = &quot;w&quot;, 
+    sim = &quot;ordinary&quot;)
+boot.ci(city.boot, conf = c(0.90, 0.95),
+    type = c(&quot;norm&quot;, &quot;basic&quot;, &quot;perc&quot;, &quot;bca&quot;))
+</code></pre>
+
+<pre><code>## BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+## Based on 999 bootstrap replicates
+## 
+## CALL : 
+## boot.ci(boot.out = city.boot, conf = c(0.9, 0.95), type = c(&quot;norm&quot;, 
+##     &quot;basic&quot;, &quot;perc&quot;, &quot;bca&quot;))
+## 
+## Intervals : 
+## Level      Normal              Basic         
+## 90%   ( 1.074,  1.857 )   ( 1.024,  1.748 )   
+## 95%   ( 0.999,  1.932 )   ( 0.891,  1.778 )  
+## 
+## Level     Percentile            BCa          
+## 90%   ( 1.293,  2.017 )   ( 1.282,  1.982 )   
+## 95%   ( 1.263,  2.150 )   ( 1.258,  2.128 )  
+## Calculations and Intervals on Original Scale
+</code></pre>
+
+<p>The following data generating function is extremely boring because it always returns
+the data set <em>city</em> from the library <em>boot</em>.</p>
+
+<pre><code class="r">returnCity = function(){
+  city
+}
+bootConfInt = function(data){
+city.boot &lt;- boot(data, ratio, R = 999, stype = &quot;w&quot;, 
+    sim = &quot;ordinary&quot;)
+boot.ci(city.boot, conf = c(0.90, 0.95),
+    type = c(&quot;norm&quot;, &quot;basic&quot;, &quot;perc&quot;, &quot;bca&quot;))  
+}
+</code></pre>
+
+<p>The function <em>ratio</em> exists at the moment only in our global environment.
+Further we had to load the <em>boot</em> package. Hence, we load the <em>boot</em>
+package by setting <em>clusterLibraries = c(&quot;boot&rdquo;)</em> and transfer the function
+<em>ratio</em> by setting <em>clusterGlobalObjects = c(&ldquo;ratio&rdquo;)</em>.</p>
+
+<pre><code class="r">dg = expandGrid(fun=&quot;returnCity&quot;)
+pg = expandGrid(proc=&quot;bootConfInt&quot;)
+eg = evalGrids(dg, pg, replications=10, ncpus=2,
+    clusterLibraries=c(&quot;boot&quot;), 
+    clusterGlobalObjects=c(&quot;ratio&quot;))
+</code></pre>
+
+<pre><code>## [1] &quot;Estimated replications per hour:  121319&quot;
+</code></pre>
+
+<p>Of course, it is possible to set <em>clusterGlobalObjects=ls()</em>, but then 
+all objects from the global environment are transferred to all workers.</p>
+
+<h2>Parameter <em>fallback</em></h2>
+
+<p>If the user is afraid of a power black out, server crashes, or something else interrupting
+the simulation study, the user can pass a character to <em>fallback</em>. Then every
+time a new element in command line 6 is chosen, the results obtained so far are written
+to the file specified in <em>fallback</em>. </p>
+
+<pre><code class="r">genData = function(n){
+  n
+}
+anaData = function(data){
+  if (data == 4) 
+    stop(&quot;Simulated error that terminates the simulation&quot;)
+  data^2
+}
+dg = expandGrid(fun=&quot;genData&quot;, n=1:5)
+pg = expandGrid(proc=&quot;anaData&quot;)
+try(eg &lt;- evalGrids(dg, pg, replications=2, 
+    fallback=&quot;simTool_fbTest&quot;))
+</code></pre>
+
+<pre><code>## [1] &quot;With fallback!&quot;
+</code></pre>
+
+<p>Loading the <em>Rdata</em>-file creates an <em>R</em>-object <em>fallBackObj</em>
+of the class <em>evalGrid</em>. Of course, some results are missing 
+which is indicated by the column \linebreak <em>.evalGridComment</em> in the 
+resulting <em>data.frame</em>.</p>
+
+<pre><code class="r"># clean the current R-session
+rm(list=ls())
+load(&quot;simTool_fbTest.Rdata&quot;)
+as.data.frame(fallBackObj)
+</code></pre>
+
+<pre><code>##   i j     fun n    proc replication V1 .evalGridComment
+## 1 1 1 genData 1 anaData           1  1             &lt;NA&gt;
+## 2 1 1 genData 1 anaData           2  1             &lt;NA&gt;
+## 3 2 1 genData 2 anaData           1  4             &lt;NA&gt;
+## 4 2 1 genData 2 anaData           2  4             &lt;NA&gt;
+## 5 3 1 genData 3 anaData           1  9             &lt;NA&gt;
+## 6 3 1 genData 3 anaData           2  9             &lt;NA&gt;
+## 7 4 1 genData 4 anaData        &lt;NA&gt; NA  Results missing
+## 8 5 1 genData 5 anaData        &lt;NA&gt; NA  Results missing
+</code></pre>
+
+<h2>Parameter <em>envir</em></h2>
+
+<p>The function <em>evalGrids</em> generates in a
+first step function calls from <em>dataGrid</em>
+and <em>procGrid</em>. This is achieved by applying
+the <em>R</em>-function
+<em>get</em>. By default, <em>envir=globalenv()</em>
+and thus <em>get</em> 
+searches the global environment of the
+current R session. An example shows how to use
+the parameter <em>envir</em>.</p>
+
+<pre><code class="r"># masking summary from the base package
+summary = function(x) sd(x) 
+g = function(x) quantile(x, 0.1)
+someFunc = function(){
+  summary = function(x) c(sd=sd(x), mean=mean(x))
+
+  dg = expandGrid(fun=&quot;runif&quot;, n=100)
+  pg = expandGrid(proc=c(&quot;summary&quot;, &quot;g&quot;))
+
+  # the standard is to use the global
+  # environment, hence summary defined outside
+  # of someFunc() will be used
+  print(as.data.frame(evalGrids(dg, pg)))
+  cat(&quot;--------------------------------------------------\n&quot;)
+  # will use the local defined summary, but g
+  # from the global environment, because
+  # g is not locally defined.
+  print(as.data.frame(evalGrids(dg, pg, envir=environment())))
+}
+someFunc()
+</code></pre>
+
+<pre><code>## [1] &quot;Estimated replications per hour:  5498723&quot;
+##   i j   fun   n    proc replication     V1    10%
+## 1 1 1 runif 100 summary           1 0.2684     NA
+## 2 1 2 runif 100       g           1     NA 0.1277
+## --------------------------------------------------
+## [1] &quot;Estimated replications per hour:  11768896&quot;
+##   i j   fun   n    proc replication     sd   mean    10%
+## 1 1 1 runif 100 summary           1 0.2689 0.5157     NA
+## 2 1 2 runif 100       g           1     NA     NA 0.1515
+</code></pre>
+
+<h2>The result object</h2>
+
+<p>Usually, the user has not work with the object returned by <em>evalGrids</em> because
+<em>as.data.frame</em> can coerce it to a <em>data.frame</em>. Nevertheless,
+we want to discuss the return value of <em>evalGrids</em>.</p>
+
+<pre><code class="r">dg = rbind.fill(
+  expandGrid(fun=&quot;rexp&quot;, n=c(10, 20), rate=1:2),
+  expandGrid(fun=&quot;rnorm&quot;, n=c(10, 20), mean=1:2))
+pg = rbind.fill(
+  expandGrid(proc=&quot;min&quot;),
+  expandGrid(proc=&quot;mean&quot;, trim=c(0.1, 0.2)))
+</code></pre>
+
+<p>Now we conduct a simulation study and discuss the result object</p>
+
+<pre><code class="r">eg = evalGrids(dg, pg, replications=100)
+</code></pre>
+
+<pre><code>## [1] &quot;Estimated replications per hour:  4541761&quot;
+</code></pre>
+
+<p>The returned object is a <em>list</em> of class <em>evalGrid</em>:</p>
+
+<pre><code class="r">names(eg)
+</code></pre>
+
+<pre><code>## [1] &quot;call&quot;              &quot;dataGrid&quot;          &quot;procGrid&quot;         
+## [4] &quot;simulation&quot;        &quot;summary.fun&quot;       &quot;est.reps.per.hour&quot;
+## [7] &quot;sessionInfo&quot;
+</code></pre>
+
+<p>The important element is <em>simulation</em>
+which itself is a <em>list</em>. It optionally contains ALL data that were generated and optionally
+contains ALL objects returned by the data analyzing functions. The structure is as follows.
+<em>eg$simulation[[i]][[r]]$data</em> is the data generated by the $i$th row in <em>dg</em>
+in the $r$th replication and <em>eg$simulation[[i]][[r]]$results[[j]]</em> is the object
+returned by the $j$th parameter constellation of <em>pg</em> applied to \linebreak
+<em>eg$simulation[[i]][[r]]$data</em>. For instance, let \(i=7, r=22\), and \(j=3\). We generated
+the data according to </p>
+
+<pre><code class="r">dg[7,]
+</code></pre>
+
+<pre><code>##     fun  n rate mean
+## 7 rnorm 10   NA    2
+</code></pre>
+
+<p>that is \Sexpr{dg[7,&ldquo;n&rdquo;]} normal distributed random variables with mean \Sexpr{dg[7,&ldquo;mean&rdquo;]}
+and analyzed it with</p>
+
+<pre><code class="r">pg[3,]
+</code></pre>
+
+<pre><code>##   proc trim
+## 3 mean  0.2
+</code></pre>
+
+<p>In the 22nd replication this leads to</p>
+
+<pre><code class="r">eg$simulation[[7]][[22]]$results[[3]]
+</code></pre>
+
+<pre><code>## [1] 1.868
+</code></pre>
+
+<p>which can be replicated by</p>
+
+<pre><code class="r">mean(eg$simulation[[7]][[22]]$data, trim=0.2)
+</code></pre>
+
+<pre><code>## [1] 1.868
+</code></pre>
+
+<h1>Converting results to <em>data.frame</em></h1>
+
+<p>We have already applied <em>as.data.frame.evalGrid</em> many times. This function
+also has the parameters <em>summary.fun</em> and <em>progress</em>. The functionality
+of these parameter resembles the corresponding parameters of <em>evalGrids</em>.
+Hence, it remains to explain <em>convert.result.fun</em>. Sometimes, the objects returned by
+the analyzing functions can not be automatically converted to <em>data.frame</em>.
+In such cases, the parameter <em>convert.result.fun</em> enables the user to pre-process
+the result objects. We exemplify this by calculating linear regression models.</p>
+
+<pre><code class="r">genRegData &lt;- function(){
+  data.frame(
+    x = 1:10,
+    y = rnorm(10, mean=1:10))
+}
+</code></pre>
+
+<pre><code class="r">eg &lt;- evalGrids(
+  expandGrid(fun=&quot;genRegData&quot;),
+  expandGrid(proc=&quot;lm&quot;, formula=c(&quot;y ~ x&quot;, &quot;y ~ x + I(x^2)&quot;)),
+  replications=100)
+</code></pre>
+
+<pre><code>## [1] &quot;Estimated replications per hour:  1001528&quot;
+</code></pre>
+
+<pre><code class="r">class(eg$simulation[[1]][[1]]$results[[1]])
+</code></pre>
+
+<pre><code>## [1] &quot;lm&quot;
+</code></pre>
+
+<p>An object of class <em>lm</em> can easily be converted by
+calling <em>coef</em>.</p>
+
+<pre><code class="r">head(df&lt;-as.data.frame(eg, convert.result.fun=coef))
+</code></pre>
+
+<pre><code>##   i j        fun proc formula replication (Intercept)      x I(x^2)
+## 1 1 1 genRegData   lm   y ~ x           1     0.41968 0.9249     NA
+## 2 1 1 genRegData   lm   y ~ x           2    -0.08206 0.9895     NA
+## 3 1 1 genRegData   lm   y ~ x           3     0.69268 0.8538     NA
+## 4 1 1 genRegData   lm   y ~ x           4    -0.91600 1.0329     NA
+## 5 1 1 genRegData   lm   y ~ x           5     0.15932 0.9132     NA
+## 6 1 1 genRegData   lm   y ~ x           6     0.29999 0.9649     NA
+</code></pre>
+
+<p>Of course, this can be combined with <em>summary.fun</em></p>
+
+<pre><code class="r">as.data.frame(eg, convert.result.fun=coef, summary.fun=c(mean, sd))
+</code></pre>
+
+<pre><code>##   i j        fun proc        formula value (Intercept)_mean (Intercept)_sd
+## 1 1 1 genRegData   lm          y ~ x (all)         0.006621         0.6631
+## 2 1 2 genRegData   lm y ~ x + I(x^2) (all)        -0.053380         1.2901
+##   x_mean   x_sd I(x^2)_mean I(x^2)_sd
+## 1 0.9995 0.1037          NA        NA
+## 2 1.0295 0.5256   -0.002727   0.04518
+</code></pre>
+
+</body>
+
+</html>

@@ -11,6 +11,24 @@ print(pg<-rbind.fill(
   expandGrid(proc="min"),
   expandGrid(proc="mean", trim=c(0.1, 0.2))))
 
+## ----, eval=FALSE--------------------------------------------------------
+#  1.  convert dg to R-functions  {g_1, ..., g_k}
+#  2.  convert pg to R-functions  {f_1, ..., f_L}
+#  3.  initialize result object
+#  4.  append dg and pg to the result object
+#  5.  t1 = current.time()
+#  6.  for g in  {g_1, ..., g_k}
+#  7.      for r in 1:replications (optionally in a parallel manner)
+#  8.          data = g()
+#  9.          for f in  {f_1, \ldots, f_L}
+#  10.             append f(data) to the result object
+#  11.         optionally append data to the result object
+#  12.      optionally summarize the result object over all
+#           replications but separately for f_1, ..., f_L
+#  13.     optionally save the results so far obtained to HDD
+#  14. t2 = current.time()
+#  15. Estimate the number of replications per hour from t1 and t2
+
 ## ------------------------------------------------------------------------
 dg = expandGrid(fun="rnorm", n=10, mean=1:2)
 pg = expandGrid(proc="min")
@@ -36,34 +54,34 @@ eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 10,
 dg = expandGrid(fun="runif", n=c(10,20,30))
 pg = expandGrid(proc=c("min", "max"))
 eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000, 
-    post.proc=mean)
+    summary.fun=mean)
 as.data.frame(eg)
 eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000, 
-    post.proc=c(mean, sd))
+    summary.fun=c(mean, sd))
 as.data.frame(eg)
 
 ## ------------------------------------------------------------------------
 set.seed(1234)
 # summarize the result objects as soon as possible
 eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000, 
-    post.proc=mean)
+    summary.fun=mean)
 as.data.frame(eg)
 set.seed(1234)
 # keeping the result objects
 eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000)
 # summarize the result objects by as.data.frame
-as.data.frame(eg, post.proc=mean)
+as.data.frame(eg, summary.fun=mean)
 
 ## ------------------------------------------------------------------------
 eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 10, 
-    ncpus=2, post.proc=mean)
+    ncpus=2, summary.fun=mean)
 as.data.frame(eg)
 
 ## ------------------------------------------------------------------------
 require(parallel)
 cl = makeCluster(rep("localhost", 2), type="PSOCK") 
 eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 10, 
-    cluster=cl, post.proc=mean)
+    cluster=cl, summary.fun=mean)
 as.data.frame(eg)
 stopCluster(cl)
 
@@ -176,8 +194,8 @@ eg <- evalGrids(
 class(eg$simulation[[1]][[1]]$results[[1]])
 
 ## ------------------------------------------------------------------------
-head(df<-as.data.frame(eg, value.fun=coef))
+head(df<-as.data.frame(eg, convert.result.fun=coef))
 
 ## ------------------------------------------------------------------------
-as.data.frame(eg, value.fun=coef, post.proc=c(mean, sd))
+as.data.frame(eg, convert.result.fun=coef, summary.fun=c(mean, sd))
 

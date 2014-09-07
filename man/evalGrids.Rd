@@ -5,9 +5,9 @@
 \usage{
 evalGrids(dataGrid, procGrid = expandGrid(proc = "length"),
   replications = 1, discardGeneratedData = FALSE, progress = FALSE,
-  post.proc = NULL, ncpus = 1L, cluster = NULL, clusterSeed = rep(12345,
-  6), clusterLibraries = NULL, clusterGlobalObjects = NULL,
-  fallback = NULL, envir = globalenv())
+  summary.fun = NULL, ncpus = 1L, cluster = NULL,
+  clusterSeed = rep(12345, 6), clusterLibraries = NULL,
+  clusterGlobalObjects = NULL, fallback = NULL, envir = globalenv(), ...)
 }
 \arguments{
 \item{dataGrid}{a \code{data.frame} where the first column
@@ -32,8 +32,9 @@ generated data sets will be part of the returned object.}
 
 \item{progress}{if \code{TRUE} a progress bar is shown in the console.}
 
-\item{post.proc}{functions to summarize the results over
-the replications, e.g. mean, sd.}
+\item{summary.fun}{univariate functions to summarize the results (numeric or logical) over
+the replications, e.g. mean, sd. Alternatively, \code{summary.fun} can be one
+function that may return a vector.}
 
 \item{ncpus}{a cluster of \code{ncpus} workers (R-processes)
 is created on the local machine to conduct the
@@ -47,8 +48,12 @@ If \code{cluster} is specified, then \code{ncpus} will
 be ignored.}
 
 \item{clusterSeed}{if the simulation is done in parallel
-manner, then the package \code{rlecuyer} is used to
-generate random numbers according to \code{clusterSeed}.}
+manner, then the combined multiple-recursive generator from L'Ecuyer (1999)
+is used to generate random numbers. Thus \code{clusterSeed} must be a (signed) integer
+vector of length 6. The 6 elements of the seed are internally regarded as
+32-bit unsigned integers. Neither the first three nor the last three
+should be all zero, and they are limited to less than 4294967087 and
+4294944443 respectively.}
 
 \item{clusterLibraries}{a character vector specifying
 the packages that should be loaded by the workers.}
@@ -64,6 +69,8 @@ are saved in the file specified by \code{fallback}.}
 \item{envir}{must be provided if the functions specified
 in \code{dataGrid} or \code{procGrid} are not part
 of the global environment.}
+
+\item{...}{only needed to alert the user if some deprecated arguments were used.}
 }
 \value{
 The returned object is a list of the class
@@ -135,15 +142,15 @@ try(as.data.frame(eg))
 
 # for the data.frame we just extract the r.squared
 # from the fitted model
-as.data.frame(eg, value.fun=function(fit) c(rsq=summary(fit)$r.squared))
+as.data.frame(eg, convert.result.fun=function(fit) c(rsq=summary(fit)$r.squared))
 
 # for the data.frame we just extract the coefficients
 # from the fitted model
-df = as.data.frame(eg, value.fun=coef)
+df = as.data.frame(eg, convert.result.fun=coef)
 
 # since we have done 2 replication we can calculate
 # sum summary statistics
-require(reshape)
+library("reshape")
 df$replication=NULL
 mdf = melt(df, id=1:7, na.rm=TRUE)
 cast(mdf, ... ~ ., c(mean, length, sd))
@@ -157,7 +164,7 @@ try(cast(mdf, ... ~ ., c(mean, length, sd)))
 
 
 # extracting the summary of the fitted.model
-as.data.frame(eg, value.fun=function(x) {
+as.data.frame(eg, convert.result.fun=function(x) {
  ret = coef(summary(x))
  data.frame(valueName = rownames(ret), ret, check.names=FALSE)
 })
@@ -170,7 +177,7 @@ as.data.frame(eg, value.fun=function(x) {
 # the functions and parameters
 # that generate the data
 N = c(10, 50, 100)
-library(plyr)
+library("plyr")
 dg = rbind.fill(
  expandGrid(fun="rbeta", n=N, shape1=4, shape2=4),
  expandGrid(fun="rnorm", n=N))
@@ -197,7 +204,7 @@ df$replication=NULL
 mdf = melt(df, id=1:8, na.rm=TRUE)
 
 # calculate, print and plot summary statistics
-require(ggplot2)
+require("ggplot2")
 print(a <- arrange(cast(mdf, ... ~ ., c(mean, sd)), n))
 ggplot(a, aes(x=fun, y=mean, color=proc)) + geom_point(size=I(3)) + facet_grid(probs ~ n)
 }

@@ -3,8 +3,8 @@
 \alias{as.data.frame.evalGrid}
 \title{Converts an \code{evalGrid} object into a \code{data.frame}}
 \usage{
-\method{as.data.frame}{evalGrid}(x, ..., value.fun = identity,
-  post.proc = NULL, progress = FALSE)
+\method{as.data.frame}{evalGrid}(x, ..., convert.result.fun = identity,
+  summary.fun = NULL, progress = FALSE)
 }
 \arguments{
 \item{x}{an object returned by
@@ -12,11 +12,12 @@
 
 \item{\dots}{only for S3 method consistency}
 
-\item{value.fun}{a functions that converts the result
+\item{convert.result.fun}{a functions that converts the result
 object contained in \code{x} into a \code{data.frame}}
 
-\item{post.proc}{univariate functions to summarize the results over
-the replications, e.g. mean, sd.}
+\item{summary.fun}{univariate functions to summarize the results (numeric or logical) over
+the replications, e.g. mean, sd. Alternatively, \code{summary.fun} can be one
+function that may return a vector.}
 
 \item{progress}{if \code{TRUE} a progress bar is shown in the console.}
 }
@@ -31,9 +32,9 @@ Converts the results contained in the
  into a \code{data.frame}. If the results can not
  be coerced automatically into a \code{data.frame}, the
  user can provide a function to pre-process the
- results (see \code{value.fun}). Furthermore,
+ results (see \code{convert.result.fun}). Furthermore,
  univariate functions to summarize the results over
- the replications can be specified.
+ the replications can be specified via \code{summary.fun}.
 }
 \examples{
 genRegData <- function(){
@@ -51,8 +52,8 @@ lm2df = function(lm.object) {
  ret = coef(summary.lm(lm.object))[, 1:2]
  data.frame(covariable = rownames(ret), ret, check.names=FALSE)
 }
-as.data.frame(eg, value.fun=lm2df, progress=TRUE)
-as.data.frame(eg, value.fun=lm2df, post.proc=c(mean, sd), progress=TRUE)
+as.data.frame(eg, convert.result.fun=lm2df, progress=TRUE)
+as.data.frame(eg, convert.result.fun=lm2df, summary.fun=c(mean, sd), progress=TRUE)
 }
 \author{
 Marsel Scheer

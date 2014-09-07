@@ -23,8 +23,9 @@
 #'  \code{procGrid} have been applied. Otherwise, ALL
 #'  generated data sets will be part of the returned object.
 #'@param progress if \code{TRUE} a progress bar is shown in the console.
-#'@param post.proc  functions to summarize the results over
-#'  the replications, e.g. mean, sd.
+#'@param summary.fun  univariate functions to summarize the results (numeric or logical) over
+#'  the replications, e.g. mean, sd. Alternatively, \code{summary.fun} can be one
+#'  function that may return a vector.
 #'@param ncpus  a cluster of \code{ncpus} workers (R-processes)
 #'  is created on the local machine to conduct the
 #'  simulation. If \code{ncpus}
@@ -35,7 +36,7 @@
 #'  If \code{cluster} is specified, then \code{ncpus} will
 #'  be ignored.
 #'@param clusterSeed  if the simulation is done in parallel
-#'  manner, then the ‘combined multiple-recursive generator’ from L'Ecuyer (1999) 
+#'  manner, then the combined multiple-recursive generator from L'Ecuyer (1999) 
 #'  is used to generate random numbers. Thus \code{clusterSeed} must be a (signed) integer 
 #'  vector of length 6. The 6 elements of the seed are internally regarded as 
 #'  32-bit unsigned integers. Neither the first three nor the last three 
@@ -52,6 +53,7 @@
 #'@param envir  must be provided if the functions specified
 #'  in \code{dataGrid} or \code{procGrid} are not part
 #'  of the global environment.
+#'@param ... only needed to alert the user if some deprecated arguments were used.
 #'@return  The returned object is a list of the class
 #'  \code{evalGrid}, where the fourth element is a list of lists named 
 #'  \code{simulation}. \code{simulation[[i]][[r]]} contains:
@@ -115,15 +117,15 @@
 #'
 #'# for the data.frame we just extract the r.squared
 #'# from the fitted model
-#'as.data.frame(eg, value.fun=function(fit) c(rsq=summary(fit)$r.squared))
+#'as.data.frame(eg, convert.result.fun=function(fit) c(rsq=summary(fit)$r.squared))
 #'
 #'# for the data.frame we just extract the coefficients
 #'# from the fitted model
-#'df = as.data.frame(eg, value.fun=coef)
+#'df = as.data.frame(eg, convert.result.fun=coef)
 #'
 #'# since we have done 2 replication we can calculate
 #'# sum summary statistics
-#'require(reshape)
+#'library("reshape")
 #'df$replication=NULL
 #'mdf = melt(df, id=1:7, na.rm=TRUE)
 #'cast(mdf, ... ~ ., c(mean, length, sd))
@@ -137,7 +139,7 @@
 #'
 #'
 #'# extracting the summary of the fitted.model
-#'as.data.frame(eg, value.fun=function(x) {
+#'as.data.frame(eg, convert.result.fun=function(x) {
 #'  ret = coef(summary(x))
 #'  data.frame(valueName = rownames(ret), ret, check.names=FALSE)
 #'})
@@ -150,7 +152,7 @@
 #'# the functions and parameters
 #'# that generate the data
 #'N = c(10, 50, 100)
-#'library(plyr)
+#'library("plyr")
 #'dg = rbind.fill(
 #'  expandGrid(fun="rbeta", n=N, shape1=4, shape2=4),
 #'  expandGrid(fun="rnorm", n=N))
@@ -177,26 +179,30 @@
 #'mdf = melt(df, id=1:8, na.rm=TRUE)
 #'
 #'# calculate, print and plot summary statistics 
-#'require(ggplot2)
+#'require("ggplot2")
 #'print(a <- arrange(cast(mdf, ... ~ ., c(mean, sd)), n))
 #'ggplot(a, aes(x=fun, y=mean, color=proc)) + geom_point(size=I(3)) + facet_grid(probs ~ n)
 #'@importFrom reshape funstofun melt melt.data.frame cast
 #'@export
 evalGrids <-
   function(dataGrid, procGrid=expandGrid(proc="length"), replications = 1, 
-           discardGeneratedData=FALSE, progress=FALSE, post.proc=NULL, 
+           discardGeneratedData=FALSE, progress=FALSE, summary.fun=NULL, 
            ncpus = 1L, cluster=NULL, clusterSeed=rep(12345,6),
            clusterLibraries=NULL,
            clusterGlobalObjects=NULL,           
            fallback=NULL,
-           envir=globalenv()) {
+           envir=globalenv(), ...) {
 
+    ellipsis = list(...)
+    if (is.element("post.proc", names(ellipsis))) stop("post.proc is deprecated. Please use summary.fun")
+    
+    
     mc = match.call()
-    if (!is.null(post.proc)){      
-      if (length(post.proc) == 1) {
-        postFun = post.proc
+    if (!is.null(summary.fun)){      
+      if (length(summary.fun) == 1) {
+        postFun = summary.fun
       } else {
-        postFun = do.call(funstofun, as.list(match.call()$post.proc[-1]))    
+        postFun = do.call(funstofun, as.list(match.call()$summary.fun[-1]))    
       }
     }
     
@@ -236,22 +242,22 @@ evalGrids <-
       }
       if (discardGeneratedData){
         if (!is.null(cluster)){
-          ret = parLapply(cluster, 1:replications, withOutData)
+          ret = parallel::parLapply(cluster, 1:replications, withOutData)
         } else {
           ret = lapply(1:replications, withOutData)
         }
       } else {
         if (!is.null(cluster)){
-          ret = parLapply(cluster, 1:replications, withData)
+          ret = parallel::parLapply(cluster, 1:replications, withData)
         } else {
           ret = lapply(1:replications, withData)
         }
       }
       
-      if (!is.null(post.proc)){
+      if (!is.null(summary.fun)){
         ret = llply(1:nrow(procGrid), function(j) {
           ret = ldply(ret, function(rep) rep$results[[j]])
-          idx = which(sapply(1:ncol(ret), function(i) all(is.numeric(ret[,i]))))
+          idx = which(sapply(1:ncol(ret), function(i) all(is.numeric(ret[,i]) | is.logical(ret[,i]))))
           mdf = melt(ret, measure.vars=idx)
           cast(mdf, ... ~ variable, postFun)
           })       
@@ -259,7 +265,7 @@ evalGrids <-
       }
       if(!is.null(fallback)){
         if(!is.null(cluster)){
-          rs = clusterCall(cluster, function() .Random.seed)
+          rs = parallel::clusterCall(cluster, function() .Random.seed)
         } else {
           rs = .Random.seed
         }
@@ -272,16 +278,15 @@ evalGrids <-
     if (!is.null(cluster) && ncpus > 1)
       warning("cluster provided. Ignore argument ncpus.")
     
-    if (is.null(cluster) && ncpus > 1){
-      require(parallel)
+    if (is.null(cluster) && ncpus > 1){            
       RNGkind("L'Ecuyer-CMRG")
-      cluster = makeCluster(rep("localhost", ncpus), type="PSOCK")  
+      cluster = parallel::makeCluster(rep("localhost", ncpus), type="PSOCK")  
     }
     
     
     if(!is.null(cluster)){      
       if (!is.null(clusterGlobalObjects)){  
-        clusterExport(cl=cluster, varlist=clusterGlobalObjects)
+        parallel::clusterExport(cl=cluster, varlist=clusterGlobalObjects)
       }
       if (!is.null(clusterLibraries)){      
         for( L in clusterLibraries){
@@ -289,8 +294,8 @@ evalGrids <-
         }
       }
       #     parSapply(cluster, seq_len(ncpus), createID)
-      clusterExport(cl=cluster, varlist=c("df", "pf"))
-      clusterSetRNGStream(cluster, iseed=clusterSeed)
+      parallel::clusterExport(cl=cluster, varlist=c("df", "pf"))
+      parallel::clusterSetRNGStream(cluster, iseed=clusterSeed)
     }     
     t1 = Sys.time()
     if(progress){
@@ -333,7 +338,7 @@ evalGrids <-
     t2 = Sys.time()
 
     if (ncpus > 1)
-      stopCluster(cluster)
+      parallel::stopCluster(cluster)
     
     est.reps.per.hour = as.integer(replications/as.numeric(difftime(t2, t1, units="hour")))
     
@@ -343,7 +348,7 @@ evalGrids <-
     #   simulation = matrix(simulation, nrow=1)
     
     ret = list(call=mc, dataGrid=dataGrid, procGrid=procGrid, simulation=simulation, 
-               post.proc = post.proc,
+               summary.fun = summary.fun,
                est.reps.per.hour=est.reps.per.hour,
                sessionInfo=sessionInfo())
     class(ret) = "evalGrid"

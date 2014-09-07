@@ -1,6 +1,6 @@
 test.as.data.frame.evalGrid = function(){
   dg = expandGrid(fun=c("runif"), n=1:4)
-  pg = expandGrid(proc=c("mean"))
+  pg = expandGrid(proc=c("mean"))  
   eg = evalGrids(dg, pg)
   df = as.data.frame(eg)
   tmp = c(
@@ -11,6 +11,16 @@ test.as.data.frame.evalGrid = function(){
   
   checkEquals(all(df$V1==tmp), TRUE)
 
+  checkException(as.data.frame(eg, value.fun=identity))
+  checkException(as.data.frame(eg, post.proc=mean))
+  
+  # check if summary.fun can handle numeric and logical
+  f = function(x) x <= 0.05
+  df = as.data.frame(eg, convert.result.fun=f, summary.fun=c(mean, median))
+  
+  postVec = function(results) summary(results)
+  df = as.data.frame(eg, convert.result.fun=f, summary.fun=postVec)
+  
   f = function(x) c(length(x), min = min(x), max(x))
   pg = expandGrid(proc=c("f"))
   # must set environment, otherwise evalGrids will not find the function f()
@@ -32,23 +42,18 @@ test.as.data.frame.evalGrid = function(){
       y = rnorm(10, mean=1:10))
   }
   
-  # the first parameter is ALWAYS used
-  # for the generated data
-  LM <- function(data, formula){
-    lm(formula=as.formula(formula), data=data)
-  }
   
   set.seed(19032013)
   eg <- evalGrids(
     expandGrid(fun="genRegData"),
-    expandGrid(proc="LM", formula=c("y ~ x", "y ~ x + I(x^2)")),
+    expandGrid(proc="lm", formula=c("y ~ x", "y ~ x + I(x^2)")),
     replications=10, envir=environment())
 
   lm2df = function(lm.object) {
     ret = coef(summary(lm.object))
     data.frame(covariable = rownames(ret), ret, check.names=FALSE)
   }
-  df<-as.data.frame(eg, value.fun=lm2df)  
+  df<-as.data.frame(eg, convert.result.fun=lm2df)  
   require(plyr)
   tmp = ldply(eg$simulation[[1]], function(v) rbind(lm2df(v$results[[1]]), lm2df(v$results[[2]])))
   tmp = arrange(tmp, Estimate)
@@ -56,7 +61,7 @@ test.as.data.frame.evalGrid = function(){
   checkEquals(all(df[,-(1:6)] == tmp), TRUE)
 
   
-  df = as.data.frame(eg, value.fun=lm2df, post.proc=mean)
+  df = as.data.frame(eg, convert.result.fun=lm2df, summary.fun=mean)
   require(reshape)
   tmp = ldply(eg$simulation[[1]], function(v) rbind(lm2df(v$results[[1]])))
   mtmp = melt(tmp, id=1)
@@ -70,7 +75,7 @@ test.as.data.frame.evalGrid = function(){
   checkEquals(all(df[,-(1:5)] == tmp), TRUE)
   
   
-  df = as.data.frame(eg, value.fun=lm2df, post.proc=c(mean, sd))
+  df = as.data.frame(eg, convert.result.fun=lm2df, summary.fun=c(mean, sd))
   
   tmp = ldply(eg$simulation[[1]], function(v) rbind(lm2df(v$results[[1]])))
   mtmp = melt(tmp, id=1)
@@ -81,7 +86,7 @@ test.as.data.frame.evalGrid = function(){
   tmp2 = cast(mtmp, ... ~ variable, c(mean, sd))
   
   tmp = rbind(tmp1, tmp2)
-  checkEquals(all(df[,-(1:5)] == tmp), TRUE)
+  checkEquals(all(df[,-(1:5)] == tmp), TRUE)  
 }
 
 test.as.data.frame.from.fallback = function(){

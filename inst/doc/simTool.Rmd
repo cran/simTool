@@ -1,14 +1,63 @@
-%\VignetteIndexEntry{simTool}
-%\VignetteEngine{knitr::knitr}
 ---
-title: "simTool"
+title: "The simTool package: Facilitate simulations"
 author: "Marsel Scheer"
-date: "24.08.2014"
+date: "`r Sys.Date()`"
 output:
   html_document:
-    number_sections: yes
-    toc: yes
+    fig_caption: false
+    number_sections: true 
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+vignette: >
+  %\VignetteIndexEntry{The simTool package: Facilitate simulations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
+
+<style>
+p {
+    max-width: 940px;
+}
+</style>
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(comment = "")
+options(width = 100, max.print = 100)
+set.seed(123456)
+library(simTool)
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(ggplot2)
+library(broom)
+library(boot)
+```
+
+# A first example
+
+1. Generate data according
+2. Fit different models
+3. Repeat step 1 and 2 three times
+4. Summarize the results with respect to the different data generating functions and models by calculating mean and standard deviation for the corresponding model terms
+```{r}
+regData <- function(n, SD) {
+  x <- seq(0, 1, length = n)
+  y <- 10 + 2 * x + rnorm(n, sd = SD)
+  tibble(x = x, y = y)
+}
+
+eval_tibbles(
+  expand_tibble(fun = "regData", n = 5L, SD = 1:2),
+  expand_tibble(proc = "lm", formula = c("y~x", "y~I(x^2)")),
+  post_analyze = broom::tidy,
+  summary_fun = list(mean = mean, sd = sd),
+  group_for_summary = "term",
+  replications = 3
+)
+```
+
 
 # Introduction
 
@@ -17,20 +66,19 @@ of administrative source code which is usually an annoying necessity of a
 simulation study.
 
 This vignette will give an introduction into the *simTool* package mainly by
-examples of growing complexity. The workhorse is the function *evalGrids*. Every
+examples of growing complexity. The workhorse is the function *eval_tibbles*. Every
 parameter of this function will be discussed briefly and the functionality is
 illustrated by at least one example.
 
 # Workflow
 
-The workflow is quite easy and natural. One defines two *data.frames*, the first
-one represents the functions that generate the data sets and the second one represents
+The workflow is quite easy and natural. One defines two *data.frames* (or *tibbles*), 
+the first one represents the functions that generate the data sets and the second one represents
 the functions that analyze the data. These two *data.frames* are passed to
-*evalGrids* which conducts the simulation. Afterwards, the results can nicely
-be displayed as a *data.frame* be coercing the object returned by *evalGrids*
-to a *data.frame*.
+*eval_tibbles* which conducts the simulation. Afterwards, the results can nicely
+be displayed as a *data.frame*.
 
-# Defining the *data.frames* for data generation and analyzation
+# Defining the *data.frames* for data generation and analysis
 
 There are 3 rules:
 
@@ -38,16 +86,14 @@ There are 3 rules:
 * the other columns are the parameters that are passed to function specified in the first column
 * The entry *NA* will not be passed to the function specified in the first column.
 
-The function *expandGrid* is a convenient function for defining such *data.frames*.
+The function *expand_tibble* is a convenient function for defining such *data.frames*.
 
 We now define the data generation functions for our first simulation.
 ```{r}
-library(simTool)
-library(plyr)
-library(reshape)
-print(dg <- rbind.fill(
-  expandGrid(fun="rexp", n=c(10, 20), rate=1:2),
-  expandGrid(fun="rnorm", n=c(10, 20), mean=1:2)))
+print(dg <- dplyr::bind_rows(
+  expand_tibble(fun = "rexp", n = c(10L, 20L), rate = 1:2),
+  expand_tibble(fun = "rnorm", n = c(10L, 20L), mean = 1:2)
+))
 ```
 
 
@@ -59,17 +105,18 @@ not passed to *rexp*.
 Similar, we define the *data.frame* for data analyzing functions.
 
 ```{r}
-print(pg<-rbind.fill(
-  expandGrid(proc="min"),
-  expandGrid(proc="mean", trim=c(0.1, 0.2))))
+print(pg <- dplyr::bind_rows(
+  expand_tibble(proc = "min"),
+  expand_tibble(proc = "mean", trim = c(0.1, 0.2))
+))
 ```
 
 Hence, this *data.frame* represents 3 *R*-functions i.e. calculating the
 minimum and the arithmetic mean with *trim=0.1* and *trim=0.2*.
 
-# The workhorse *evalGrids*
+# The workhorse *eval_tibbles*
 
-The workhorse *evalGrids* has the following simplified pseudo code:
+The workhorse *eval_tibbles* has the following simplified pseudo code:
 
 
 ```{r, eval=FALSE}
@@ -82,129 +129,146 @@ The workhorse *evalGrids* has the following simplified pseudo code:
 7.      for r in 1:replications (optionally in a parallel manner) 
 8.          data = g() 
 9.          for f in  {f_1, \ldots, f_L} 
-10.             append f(data) to the result object 
+10.             append f(data) to the result object (optionally apply a post-analyze-function)
 11.         optionally append data to the result object 
 12.      optionally summarize the result object over all  
-         replications but separately for f_1, ..., f_L
-13.     optionally save the results so far obtained to HDD  
-14. t2 = current.time() 
-15. Estimate the number of replications per hour from t1 and t2 
+         replications but separately for f_1, ..., f_L (and optional group variables)
+13. t2 = current.time() 
+14. Estimate the number of replications per hour from t1 and t2 
 ```
 
-In general, the object returned by *evalGrids* is a *list*
-of class *evalGrid* and can be coerced into 
-a *data.frame*. Later on, we will investigate the case if this is
-not the case.
+The object returned by *eval_tibbles* is a *list* of class *eval_tibbles*.
 
 ```{r}
-dg = expandGrid(fun="rnorm", n=10, mean=1:2)
-pg = expandGrid(proc="min")
-eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 2)
-as.data.frame(eg)
+dg <- expand_tibble(fun = "rnorm", n = 10, mean = 1:2)
+pg <- expand_tibble(proc = "min")
+eg <- eval_tibbles(data_grid = dg, proc_grid = pg, replications = 2)
+eg
 ```
 
 As you can see, the function always estimates the number of replications that can be
 done in one hour. 
 
-The object returned by *evalGrids* will be discussed at the
-end of this section. But specific points about this object will
-be explained earlier.
-
 ## Parameter *replications*
 
 Of course, this parameter controls the number of replications conducted.
 ```{r}
-eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 3)
-as.data.frame(eg)
+eg <- eval_tibbles(data_grid = dg, proc_grid = pg, replications = 3)
+eg
 ```
 
-## Parameter *discardGeneratedData*
+## Parameter *discard_generated_data*
 
-*evalGrids* saves ALL generated data sets.
+*eval_tibbles* saves ALL generated data sets.
+```{r}
+eg <- eval_tibbles(data_grid = dg, proc_grid = pg, replications = 1)
+eg$simulation
+eg$generated_data
+```
 In general, it is sometimes very handy to
 have the data sets in order to investigate unusual or unexpected results.
 But saving the generated data sets can be very memory consuming.
 Stop saving the generated data sets can be obtained by setting 
-*discardGeneratedData = TRUE*.
-Confer command line 11 in the pseudo code.
-```{r}
-eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000)
-object.size(eg)
-eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000,
-    discardGeneratedData = TRUE)
-object.size(eg)
-```
-The object returned by *evalGrids* will be discussed at the
-end of this vignette.
+*discardGeneratedData = TRUE*. See command line 11 in the pseudo code.
 
-## Parameter *progress*
-
-This parameter activates a text progress bar in the console. Usually,
-this does not make sense if one uses *Sweave* or *knitr*,
-but for demonstration purpose we do this here.
-
-```{r}
-eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 10,
-    progress = TRUE)
-``` 
-
-The progress bar increases every time a new element is chosen in
-command line 6 of the pseudo code.
-
-## Parameter *summary.fun*
+## Parameter *summary_fun*
 
 As stated in command line 12 we can summarize the result objects over 
 all replications but separately for all data analyzing functions.
 ```{r}
-dg = expandGrid(fun="runif", n=c(10,20,30))
-pg = expandGrid(proc=c("min", "max"))
-eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000, 
-    summary.fun=mean)
-as.data.frame(eg)
-eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000, 
-    summary.fun=c(mean, sd))
-as.data.frame(eg)
+dg <- expand_tibble(fun = "runif", n = c(10, 20, 30))
+pg <- expand_tibble(proc = c("min", "max"))
+eval_tibbles(
+  data_grid = dg, proc_grid = pg, replications = 1000,
+  summary_fun = list(mean = mean)
+)
+eval_tibbles(
+  data_grid = dg, proc_grid = pg, replications = 1000,
+  summary_fun = list(mean = mean, sd = sd)
+)
 ```
-Note, by specifying the parameter *summary.fun* the generated data sets
+Note, by specifying the parameter *summary_fun* the generated data sets
 and all individual result objects are discarded. In this example we discard
 $3 \times 1000$ data sets and $3 \times 1000 \times 2$ individual result
-objects. Although the function *as.data.frame* or to be more precise
-*as.data.frame.evalGrid* has also a parameter *summary.fun* that
-serves the same purpose, it may be necessary to summarize the results as soon
-as possible to spare memory. 
+objects. 
 
-We now briefly show that *summary.fun* in *evalGrids* and
-*as.data.frame* yield the same results.
+## Parameter *post_analyze*
 
+Sometimes the analyzing functions return quite complicated objects like in
+the Section *A first example*.
 ```{r}
-set.seed(1234)
-# summarize the result objects as soon as possible
-eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000, 
-    summary.fun=mean)
-as.data.frame(eg)
-set.seed(1234)
-# keeping the result objects
-eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 1000)
-# summarize the result objects by as.data.frame
-as.data.frame(eg, summary.fun=mean)
+eval_tibbles(
+  expand_tibble(fun = "regData", n = 5L, SD = 1:2),
+  expand_tibble(proc = "lm", formula = c("y~x", "y~I(x^2)")),
+  replications = 2
+)
+```
+The parameter *post_analyze* (if specified) is applied directly after the
+result was generated (see command line 10). Note, *purrr::compose* can be
+very handy if your post-analyzing-function can be defined by a few single
+functions:
+```{r}
+eval_tibbles(
+  expand_tibble(fun = "regData", n = 5L, SD = 1:2),
+  expand_tibble(proc = "lm", formula = c("y~x", "y~I(x^2)")),
+  post_analyze = purrr::compose(function(mat) mat["(Intercept)", "Estimate"], coef, summary.lm),
+  replications = 2
+)
 ```
 
-## Parameter *ncpus* and *clusterSeed*
+## Parameter *group_for_summary*
+
+When the result object is a *data.frame* itself, 
+for instance
+
+```{r}
+presever_rownames <- function(mat) {
+  rn <- rownames(mat)
+  ret <- tibble::as_tibble(mat)
+  ret$term <- rn
+  ret
+}
+
+eval_tibbles(
+  expandGrid(fun = "regData", n = 5L, SD = 1:2),
+  expandGrid(proc = "lm", formula = c("y~x", "y~I(x^2)")),
+  post_analyze = purrr::compose(presever_rownames, coef, summary),
+  replications = 3
+)
+```
+In order to summarize the replications it is necessary to 
+additional group the calculations with respect to 
+another variable. This variable can be passed to
+*group_for_summary*
+```{r}
+eval_tibbles(
+  expandGrid(fun = "regData", n = 5L, SD = 1:2),
+  expandGrid(proc = "lm", formula = c("y~x", "y~I(x^2)")),
+  post_analyze = purrr::compose(presever_rownames, coef, summary),
+  summary_fun = list(mean = mean, sd = sd),
+  group_for_summary = "term",
+  replications = 3
+)
+```
+
+
+## Parameter *ncpus* and *cluster_seed*
 
 By specifying *ncpus* larger than 1 a cluster objected is created
 for the user and passed to the parameter *cluster* discussed in the
 next section.
 ```{r}
-eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 10, 
-    ncpus=2, summary.fun=mean)
-as.data.frame(eg)
+eval_tibbles(
+  data_grid = dg, proc_grid = pg, replications = 10,
+  ncpus = 2, summary_fun = list(mean = mean)
+)
 ```
-As it is stated in command line 6, the replications are parallelized. In our case, this means
+As it is stated in command line 7, the replications are parallelized. In our case, this means
 that roughly every CPU conducts 5 replications.
 
-The parameter *clusterSeed* must be an integer vector of length 6 and
+The parameter *cluster_seed* must be an integer vector of length 6 and
 serves the same purpose as the function *set.seed*. By default,
-*clusterSeed* equals *rep(12345, 6)*. Note, in order
+*cluster_seed* equals *rep(12345, 6)*. Note, in order
 to reproduce the simulation study it is also necessary that *ncpus*
 does not change.
 
@@ -212,20 +276,21 @@ does not change.
 The user can create a cluster on its own. This also enables the user
 to distribute the replications over different computers in a network.
 ```{r}
-require(parallel)
-cl = makeCluster(rep("localhost", 2), type="PSOCK") 
-eg = evalGrids(dataGrid = dg, procGrid = pg, replications = 10, 
-    cluster=cl, summary.fun=mean)
-as.data.frame(eg)
+library(parallel)
+cl <- makeCluster(rep("localhost", 2), type = "PSOCK")
+eval_tibbles(
+  data_grid = dg, proc_grid = pg, replications = 10,
+  cluster = cl, summary_fun = list(mean = mean)
+)
 stopCluster(cl)
 ```
 As you can see our cluster consists of 3 workers. Hence, this reproduces the
 results from the last code chunk above. Further note, if the user starts the
 cluster, the user also has to stop the cluster. A cluster that is created
-within *evalGrids* by specifying *ncpus* is also stop within
-*evalGrids*.
+within *eval_tibbles* by specifying *ncpus* is also stop within
+*eval_tibbles*.
 
-## Parameter *clusterLibraries* and *clusterGlobalObjects*
+## Parameter *cluster_libraries* and *cluster_global_objects*
 
 A newly created cluster is ``empty''. Hence, if the simulation study requires
 libraries or objects from the global environment, they must be transferred to 
@@ -234,189 +299,240 @@ the cluster.
 Lets look at standard example from the *boot* package.
 ```{r}
 library(boot)
-ratio <- function(d, w) sum(d$x * w)/sum(d$u * w)
-city.boot <- boot(city, ratio, R = 999, stype = "w", 
-    sim = "ordinary")
-boot.ci(city.boot, conf = c(0.90, 0.95),
-    type = c("norm", "basic", "perc", "bca"))
+ratio <- function(d, w) sum(d$x * w) / sum(d$u * w)
+city.boot <- boot(city, ratio,
+  R = 999, stype = "w",
+  sim = "ordinary"
+)
+boot.ci(city.boot,
+  conf = c(0.90, 0.95),
+  type = c("norm", "basic", "perc", "bca")
+)
 ```
 
 The following data generating function is extremely boring because it always returns
 the data set *city* from the library *boot*.
 ```{r}
-returnCity = function(){
+returnCity <- function() {
   city
 }
-bootConfInt = function(data){
-city.boot <- boot(data, ratio, R = 999, stype = "w", 
-    sim = "ordinary")
-boot.ci(city.boot, conf = c(0.90, 0.95),
-    type = c("norm", "basic", "perc", "bca"))  
+bootConfInt <- function(data) {
+  city.boot <- boot(data, ratio,
+    R = 999, stype = "w",
+    sim = "ordinary"
+  )
+  boot.ci(city.boot,
+    conf = c(0.90, 0.95),
+    type = c("norm", "basic", "perc", "bca")
+  )
 }
 ```
 
 The function *ratio* exists at the moment only in our global environment.
 Further we had to load the *boot* package. Hence, we load the *boot*
-package by setting *clusterLibraries = c("boot")* and transfer the function
-*ratio* by setting *clusterGlobalObjects = c("ratio")*.
+package by setting *cluster_libraries = c("boot")* and transfer the function
+*ratio* by setting *cluster_global_objects = c("ratio")*.
 
 ```{r}
-dg = expandGrid(fun="returnCity")
-pg = expandGrid(proc="bootConfInt")
-eg = evalGrids(dg, pg, replications=10, ncpus=2,
-    clusterLibraries=c("boot"), 
-    clusterGlobalObjects=c("ratio"))
+dg <- expand_tibble(fun = "returnCity")
+pg <- expand_tibble(proc = "bootConfInt")
+eval_tibbles(dg, pg,
+  replications = 10, ncpus = 2,
+  cluster_libraries = c("boot"),
+  cluster_global_objects = c("ratio")
+)
 ```
 
-Of course, it is possible to set *clusterGlobalObjects=ls()*, but then 
+Of course, it is possible to set *cluster_global_objects=ls()*, but then 
 all objects from the global environment are transferred to all workers.
-
-## Parameter *fallback*
-
-If the user is afraid of a power black out, server crashes, or something else interrupting
-the simulation study, the user can pass a character to *fallback*. Then every
-time a new element in command line 6 is chosen, the results obtained so far are written
-to the file specified in *fallback*. 
-
-```{r}
-genData = function(n){
-  n
-}
-anaData = function(data){
-  if (data == 4) 
-    stop("Simulated error that terminates the simulation")
-  data^2
-}
-dg = expandGrid(fun="genData", n=1:5)
-pg = expandGrid(proc="anaData")
-try(eg <- evalGrids(dg, pg, replications=2, 
-    fallback="simTool_fbTest"))
-```
-
-Loading the *Rdata*-file creates an *R*-object *fallBackObj*
-of the class *evalGrid*. Of course, some results are missing 
-which is indicated by the column \linebreak *.evalGridComment* in the 
-resulting *data.frame*.
-
-```{r}
-# clean the current R-session
-rm(list=ls())
-load("simTool_fbTest.Rdata")
-as.data.frame(fallBackObj)
-```
 
 ## Parameter *envir*
 
-The function *evalGrids* generates in a
-first step function calls from *dataGrid*
-and *procGrid*. This is achieved by applying
-the *R*-function
-*get*. By default, *envir=globalenv()*
-and thus *get* 
-searches the global environment of the
+The function *eval_tibbles* generates in a
+first step function calls from *data_grid*
+and *proc_grid*. This is achieved by applying
+the *R*-function *get*. By default, *envir=globalenv()*
+and thus *get* searches the global environment of the
 current R session. An example shows how to use
 the parameter *envir*.
 ```{r}
 # masking summary from the base package
-summary = function(x) sd(x) 
-g = function(x) quantile(x, 0.1)
-someFunc = function(){
-  summary = function(x) c(sd=sd(x), mean=mean(x))
-  
-  dg = expandGrid(fun="runif", n=100)
-  pg = expandGrid(proc=c("summary", "g"))
+summary <- function(x) tibble(sd = sd(x))
+g <- function(x) tibble(q0.1 = quantile(x, 0.1))
+someFunc <- function() {
+  summary <- function(x) tibble(sd = sd(x), mean = mean(x))
+
+  dg <- expand_tibble(fun = "runif", n = 100)
+  pg <- expand_tibble(proc = c("summary", "g"))
 
   # the standard is to use the global
   # environment, hence summary defined outside
   # of someFunc() will be used
-  print(as.data.frame(evalGrids(dg, pg)))
+  print(eval_tibbles(dg, pg))
   cat("--------------------------------------------------\n")
   # will use the local defined summary, but g
   # from the global environment, because
   # g is not locally defined.
-  print(as.data.frame(evalGrids(dg, pg, envir=environment())))
+  print(eval_tibbles(dg, pg, envir = environment()))
 }
 someFunc()
 ```
 
+# Some Examples
 
-## The result object
-Usually, the user has not work with the object returned by *evalGrids* because
-*as.data.frame* can coerce it to a *data.frame*. Nevertheless,
-we want to discuss the return value of *evalGrids*.
-```{r}
-dg = rbind.fill(
-  expandGrid(fun="rexp", n=c(10, 20), rate=1:2),
-  expandGrid(fun="rnorm", n=c(10, 20), mean=1:2))
-pg = rbind.fill(
-  expandGrid(proc="min"),
-  expandGrid(proc="mean", trim=c(0.1, 0.2)))
-```
-
-Now we conduct a simulation study and discuss the result object
-```{r}
-eg = evalGrids(dg, pg, replications=100)
-```
-The returned object is a *list* of class *evalGrid*:
-```{r}
-names(eg)
-```
-The important element is *simulation*
-which itself is a *list*. It optionally contains ALL data that were generated and optionally
-contains ALL objects returned by the data analyzing functions. The structure is as follows.
-*eg\$simulation[[i]][[r]]\$data* is the data generated by the $i$th row in *dg*
-in the $r$th replication and *eg\$simulation[[i]][[r]]\$results[[j]]* is the object
-returned by the $j$th parameter constellation of *pg* applied to \linebreak
-*eg\$simulation[[i]][[r]]\$data*. For instance, let $i=7, r=22$, and $j=3$. We generated
-the data according to 
-```{r}
-dg[7,]
-```
-that is \Sexpr{dg[7,"n"]} normal distributed random variables with mean \Sexpr{dg[7,"mean"]}
-and analyzed it with
-```{r}
-pg[3,]
-```
-In the 22nd replication this leads to
-```{r}
-eg$simulation[[7]][[22]]$results[[3]]
-```
-which can be replicated by
-```{r}
-mean(eg$simulation[[7]][[22]]$data, trim=0.2)
-```
-
-# Converting results to *data.frame*
-
-We have already applied *as.data.frame.evalGrid* many times. This function
-also has the parameters *summary.fun* and *progress*. The functionality
-of these parameter resembles the corresponding parameters of *evalGrids*.
-Hence, it remains to explain *convert.result.fun*. Sometimes, the objects returned by
-the analyzing functions can not be automatically converted to *data.frame*.
-In such cases, the parameter *convert.result.fun* enables the user to pre-process
-the result objects. We exemplify this by calculating linear regression models.
+Note, the following code examples will use more computational 
+resources. In order to prevent that these are checked/executed
+on the CRAN check farm, they are only evaluated
+if the environment variable *NOT_CRAN* is set to "true"
 
 ```{r}
-genRegData <- function(){
-  data.frame(
-    x = 1:10,
-    y = rnorm(10, mean=1:10))
+EVAL <- FALSE
+if (Sys.getenv("NOT_CRAN") == "true") {
+  EVAL <- TRUE
 }
-```                                                                                                     
-
-```{r}
-eg <- evalGrids(
-  expandGrid(fun="genRegData"),
-  expandGrid(proc="lm", formula=c("y ~ x", "y ~ x + I(x^2)")),
-  replications=100)
-class(eg$simulation[[1]][[1]]$results[[1]])
-``` 
-An object of class *lm* can easily be converted by
-calling *coef*.
-```{r}
-head(df<-as.data.frame(eg, convert.result.fun=coef))
 ```
-Of course, this can be combined with *summary.fun*
-```{r}
-as.data.frame(eg, convert.result.fun=coef, summary.fun=c(mean, sd))
+
+## Sampling distribution of mean and median for normal and exponential distributed data
+
+First we define how the data is generated, where the sample size should be 10 and 100:
+```{r, eval = EVAL}
+dg <- dplyr::bind_rows(
+  expand_tibble(fun = c("rnorm"), mean = 1, n = c(10L, 100L)),
+  expand_tibble(fun = c("rexp"), rate = 1, n = c(10L, 100L))
+)
+dg
+```
+
+Afterwards we define how we want to analyze the data:
+```{r, eval = EVAL}
+pg <- expand_tibble(proc = c("mean", "median"))
+pg
+```
+
+Finally, we conduct the simulation and visualize the results
+```{r, eval = EVAL}
+et <- eval_tibbles(dg, pg, replications = 10^5, ncpus = 2)
+et
+et$simulation %>%
+  ggplot(aes(x = results, color = interaction(fun, n), fill = interaction(fun, n))) +
+  geom_density(alpha = 0.3) +
+  facet_wrap(~ proc)
+```
+
+## Comparing bootstrap confidence intervals with classical studentized interval
+
+We want to compare the confidence intervals that are
+generated by *boot::boot.ci()* and *stats::t.test()*.
+Unfortunately, *boot::boot.ci()* cannot be applied
+directly to the generated data sets. Therefore, we
+write a new function:
+```{r, eval = EVAL}
+bootstrap_ci <- function(x, conf.level, R = 999) {
+  b <- boot::boot(x, function(d, i) {
+    n <- length(i)
+    c(
+      mean = mean(d[i]),
+      variance = (n - 1) * var(d[i]) / n^2
+    )
+  }, R = R)
+  boot::boot.ci(b, conf = conf.level, type = "all")
+}
+```
+
+Furthermore, *boot::boot.ci()* returns in general
+more than one confidence interval
+and the structures returned by *boot::boot.ci()* and *stats::t.test()*
+are also very different. One solution could be
+to write a function *t_test()* that calls *stats::t.test()*,
+modifies the returned object and additionally
+modify the function *bootstrap_ci* so that both
+function return objects with a unified structure.
+But instead of that we will implement a function that
+is later on passed to the argument *post_analyze* of
+*eval_tibbles*:
+```{r, eval = EVAL}
+post_analyze <- function(o) {
+  if (class(o) == "htest") {
+  #post-process the object returned by t.test
+    ci <- o$conf.int
+    return(tibble::tibble(
+      type = "t.test",
+      aspect = c("covered", "ci_length"),
+      value = c(ci[1] <= 3L && 3L <= ci[2], ci[2] - ci[1])
+    ))
+  } else if (class(o) == "bootci") {
+  #post-process the object returned by boot.ci
+    method = c("normal", "basic", "student", "percent", "bca")
+    ret = o[method]
+    lower = unlist(purrr::map(ret, ~dplyr::nth(.x, -2)))
+    upper = sapply(ret, dplyr::last)
+    type = paste("boot", method, sep = "_")
+
+    return(
+      dplyr::bind_rows(
+      tibble::tibble(
+        type = type, 
+        aspect = "covered", 
+        value = as.integer(lower <= 3L & 3L <= upper)),
+      tibble::tibble(
+        type = type, 
+        aspect = "ci_length", 
+        value = upper - lower))
+    )
+  }
+}
+```
+As you can see, the objects returned are tibbles with more than one row.
+Summarizing the data over all replications will in general use the
+variable *type* and *aspect* as grouping variables. This can be achieved
+by using the parameter *group_for_summary* of *eval_tibbles*.
+
+### Define and run the simulation
+
+We want to generate normal-, uniform-, and exponential distributed data:
+```{r, eval = EVAL}
+dg <- dplyr::bind_rows(
+  simTool::expand_tibble(fun = "rnorm", n = 10L, mean = 3, sd = sqrt(3)),
+  simTool::expand_tibble(fun = "runif", n = 10L, max = 6),
+  simTool::expand_tibble(fun = "rexp", n = 10L, rate = 1 / 3)
+)
+dg
+```
+and apply our functions that calculate the confidence intervals to it
+using two different confidence levels.
+
+```{r, eval = EVAL}
+pg <- simTool::expand_tibble(
+  proc = c("t.test","bootstrap_ci"),
+  conf.level = c(0.9, 0.95)
+)
+pg
+```
+Note, that the structure of the objects returned are quite different which
+addressed by our function *post_analyze*. The variables *type* and *aspect*
+that are created by *post_analyze* are to distinguish the different
+confidence intervals. Since these variables are part of the result objects
+*eval_tibbles* assumes that these variables are results.
+In order to summarize the results (calculating the mean) over all replications
+correctly we need to tell eval_tibbles that additional group variables
+are *type* and *aspect*:
+```{r, eval = EVAL}
+et <- eval_tibbles(dg, pg,
+  replications = 10^3, ncpus = 2,
+  cluster_global_objects = "post_analyze",
+  post_analyze = post_analyze,
+  summary_fun = list(mean = mean),
+  group_for_summary = c("aspect", "type")
+)
+et
+```
+
+Finally, we can visualize the summarized results:
+```{r, eval = EVAL, fig.width=13}
+et$simulation %>%
+  ggplot(aes(x = fun, y = value, group = type, fill = type, label = round(value, 2))) +
+  geom_col(position = "dodge") +
+  geom_label(position = position_dodge(0.9), size = 3) +
+  theme(legend.position = "bottom") + 
+  facet_grid(aspect ~ conf.level, scales = "free")
 ```

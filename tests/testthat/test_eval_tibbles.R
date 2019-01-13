@@ -1,11 +1,5 @@
 testthat::context("test_eval_tibbles.R")
 
-rng <- function(data, ...) {
-  ret <- range(data)
-  names(ret) <- c("min", "max")
-  ret
-}
-
 genData1 <- function(df) {
   df[[1]][, 1]
 }
@@ -21,6 +15,168 @@ dg <- expand_tibble(
     matrix(1:8, 4, 2)
   )
 )
+
+
+f <- function(data, .truth) {
+  .truth$df[[1]]
+}
+
+pg <- expand_tibble(proc = "f")
+eg <- eval_tibbles(dg, pg, rep = 2, envir = environment(), simplify = FALSE)
+
+test_that("Explicit defined .truth parameter of the data analyzing function can access the matrix for the data generating function", {
+  expect_true(all(sapply(1:8, function(i) all(eg$simulation$df[[i]] == eg$simulation$results[[i]]))))
+})
+
+###############################################################
+
+dg <- expand_tibble(
+  fun = c("genData1", "genData2"),
+  df = list(
+    matrix(1:6, 3, 2),
+    matrix(1:8, 4, 2)
+  ),
+  xyz = NA
+)
+
+
+f <- function(data, .truth) {
+  .truth$df[[1]]
+}
+
+pg <- expand_tibble(proc = "f")
+eg <- eval_tibbles(dg, pg, rep = 2, envir = environment(), simplify = FALSE)
+
+test_that("Explicit defined .truth parameter of the data analyzing function can access the matrix for the data generating function", {
+  expect_true(all(sapply(1:8, function(i) all(eg$simulation$df[[i]] == eg$simulation$results[[i]]))))
+})
+
+
+################################################################
+
+f <- function(data, .truth) {
+  0
+}
+
+post_ana <- function(result, .truth) {
+  .truth$df[[1]]
+}
+
+
+pg <- expand_tibble(proc = "f")
+eg <- eval_tibbles(dg, pg,
+  rep = 2, envir = environment(), simplify = FALSE,
+  post_analyze = post_ana
+)
+
+
+test_that("Explicit defined .truth parameter of the post analyzing function can access the matrix for the data generating function", {
+  expect_true(all(sapply(1:8, function(i) all(eg$simulation$df[[i]] == eg$simulation$results[[i]]))))
+})
+
+
+##############################################################
+
+dg <- expand_tibble(
+  fun = c("genData1", "genData2"),
+  df = list(
+    matrix(1:6, 3, 2),
+    matrix(1:8, 4, 2)
+  )
+)
+dg$.truth <- 1:4
+
+
+f <- function(data, .truth) {
+  .truth
+}
+
+pg <- expand_tibble(proc = "f")
+eg <- eval_tibbles(dg, pg, rep = 2, envir = environment(), simplify = TRUE)
+
+test_that("Explicit defined .truth column is passed to the data analyzing function", {
+  expect_identical(eg$simulation$results, c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L))
+})
+
+##############################################################
+
+f <- function(data, .truth) {
+  0
+}
+
+post_ana <- function(result, .truth) {
+  .truth
+}
+
+pg <- expand_tibble(proc = c("f"))
+eg <- eval_tibbles(dg, pg,
+  rep = 2, envir = environment(), simplify = TRUE,
+  post_analyze = post_ana
+)
+
+test_that("Explicit defined .truth column is passed to the post analyzing function", {
+  expect_identical(eg$simulation$results, c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L))
+})
+
+##############################################################
+
+f <- function(data, .truth) {
+  0
+}
+
+pg <- expand_tibble(proc = c("f", "min"))
+eg <- eval_tibbles(dg, pg, rep = 2, envir = environment(), simplify = TRUE)
+
+test_that("Mixture of data analyzing function with and without .truth parameter work", {
+  expect_identical(eg$simulation$results, c(0, 1, 0, 1, 0, 4, 0, 4, 0, 1, 0, 1, 0, 5, 0, 5))
+})
+
+
+###########################################################
+
+pg <- expand_tibble(proc = c("f"), .truth = 1)
+
+test_that("Warning if proc_grid has a .truth-column", {
+  expect_warning(eval_tibbles(dg, pg, rep = 2, envir = environment(), simplify = TRUE), "\\.truth.*ignored")
+})
+
+
+
+
+##############################################################
+
+f <- function(data, .truth) {
+  0
+}
+
+dg$a <- 4:7
+names(dg)[4] <- ".truth"
+
+pg <- expand_tibble(proc = c("f"))
+
+test_that("Error if data grid has two columns .truth", {
+  expect_error(eval_tibbles(dg, pg, rep = 2, envir = environment(), simplify = TRUE), "only one column with name '.truth' allowed")
+})
+
+#############################################################
+
+
+rng <- function(data, ...) {
+  ret <- range(data)
+  names(ret) <- c("min", "max")
+  ret
+}
+
+dg <- expand_tibble(
+  fun = c("genData1", "genData2"),
+  df = list(
+    matrix(1:6, 3, 2),
+    matrix(1:8, 4, 2)
+  )
+)
+
+
+
 pg <- expand_tibble(proc = "rng")
 eg <- eval_tibbles(dg, pg, rep = 2, envir = environment(), simplify = FALSE)
 
@@ -52,7 +208,9 @@ class = c("tbl_df", "tbl", "data.frame")
 
 
 test_that("Tibbles for data generating functions can be used. Results were created and stored in simulation", {
-  expect_identical(eg$simulation, expected_df)
+  for (col in colnames(eg$simulation)) {
+    expect_identical(eg$simulation[[col]], expected_df[[col]])  
+  }
 })
 
 test_that("Generated data is stored.", {
@@ -135,7 +293,9 @@ expected_df <- structure(
 
 
 test_that("Tibbles for data generating and data analyzing functions can be used. Results were created and stored in simulation", {
-  expect_identical(eg$simulation, expected_df)
+  for (col in colnames(eg$simulation)) {
+    expect_identical(eg$simulation[[col]], expected_df[[col]])  
+  }
 })
 
 ##################################################################
@@ -186,7 +346,9 @@ test_that(
 )
 
 test_that("One analyzing function. Results were created and stored in simulation", {
-  expect_identical(eg$simulation, expected_df)
+  for (col in colnames(eg$simulation)) {
+    expect_identical(eg$simulation[[col]], expected_df[[col]])  
+  }
 })
 ##################################################################
 
@@ -216,7 +378,9 @@ expected_df <- structure(list(fun = c(
 ))
 
 test_that("Simplify the simulation results", {
-  expect_identical(eg$simulation, expected_df)
+  for (col in colnames(eg$simulation)) {
+    expect_identical(eg$simulation[[col]], expected_df[[col]])  
+  }
 })
 
 
@@ -236,7 +400,9 @@ expected_df <- structure(list(
 ))
 
 test_that("Post analyze function works", {
-  expect_identical(eg$simulation, expected_df)
+  for (col in colnames(eg$simulation)) {
+    expect_identical(eg$simulation[[col]], expected_df[[col]])  
+  }
 })
 
 ##################################################################
@@ -281,7 +447,9 @@ expected_df <- structure(list(fun = c(
 ))
 
 test_that("Three analyzing functions. Results were created and stored in simulation", {
-  expect_identical(eg$simulation, expected_df)
+  for (col in colnames(eg$simulation)) {
+    expect_identical(eg$simulation[[col]], expected_df[[col]])  
+  }
 })
 
 ##################################################################
@@ -357,7 +525,9 @@ expected_df <- structure(list(fun = c(
 ))
 
 test_that("Three analyzing functions and one summary function. Results were created and stored in simulation", {
-  expect_identical(eg$simulation, expected_df)
+  for (col in colnames(eg$simulation)) {
+    expect_identical(eg$simulation[[col]], expected_df[[col]])  
+  }
 })
 
 
@@ -501,7 +671,9 @@ expected_df <- structure(list(fun = c(
 
 
 test_that("Three analyzing functions and three summary function. Results were created and stored in simulation", {
-  expect_identical(eg$simulation, expected_df)
+  for (col in colnames(eg$simulation)) {
+    expect_identical(eg$simulation[[col]], expected_df[[col]])  
+  }
 })
 
 
@@ -567,7 +739,9 @@ expected_df <- structure(list(fun = c(
   "tbl", "data.frame"
 ))
 test_that("Three analyzing functions and one summary function over 2 cpus. Results were created and stored in simulation", {
-  expect_identical(eg$simulation, expected_df)
+  for (col in colnames(eg$simulation)) {
+    expect_identical(eg$simulation[[col]], expected_df[[col]])  
+  }
 })
 
 ##################################################################
@@ -609,7 +783,9 @@ expected_df <- structure(
 )
 
 test_that("One group for summary_fun. Results were created and stored in simulation", {
-  expect_identical(eg$simulation, expected_df)
+  for (col in colnames(eg$simulation)) {
+    expect_identical(eg$simulation[[col]], expected_df[[col]])  
+  }
 })
 
 ##################################################################
@@ -662,7 +838,9 @@ expected_df <- structure(list(fun = c("gen_data", "gen_data"), replications = c(
   "data.frame"
 ))
 test_that("Two groups for summary_fun. Results were created and stored in simulation", {
-  expect_identical(eg$simulation, expected_df)
+  for (col in colnames(eg$simulation)) {
+    expect_identical(eg$simulation[[col]], expected_df[[col]])  
+  }
 })
 
 
@@ -736,4 +914,3 @@ test_that("Warning if cluster and ncpus are specified and that the cluster cl is
 
 
 parallel::stopCluster(cl)
-

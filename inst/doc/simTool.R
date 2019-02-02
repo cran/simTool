@@ -93,7 +93,7 @@ eval_tibbles(
 eval_tibbles(
   expand_tibble(fun = "regData", n = 5L, SD = 1:2),
   expand_tibble(proc = "lm", formula = c("y~x", "y~I(x^2)")),
-  post_analyze = purrr::compose(function(mat) mat["(Intercept)", "Estimate"], coef, summary.lm),
+  post_analyze = purrr::compose(function(mat) mat["(Intercept)", "Estimate"], coef, summary.lm, identity),
   replications = 2
 )
 
@@ -108,7 +108,7 @@ presever_rownames <- function(mat) {
 eval_tibbles(
   expandGrid(fun = "regData", n = 5L, SD = 1:2),
   expandGrid(proc = "lm", formula = c("y~x", "y~I(x^2)")),
-  post_analyze = purrr::compose(presever_rownames, coef, summary),
+  post_analyze = purrr::compose(presever_rownames, coef, summary, identity),
   replications = 3
 )
 
@@ -116,7 +116,7 @@ eval_tibbles(
 eval_tibbles(
   expandGrid(fun = "regData", n = 5L, SD = 1:2),
   expandGrid(proc = "lm", formula = c("y~x", "y~I(x^2)")),
-  post_analyze = purrr::compose(presever_rownames, coef, summary),
+  post_analyze = purrr::compose(presever_rownames, coef, summary, identity),
   summary_fun = list(mean = mean, sd = sd),
   group_for_summary = "term",
   replications = 3

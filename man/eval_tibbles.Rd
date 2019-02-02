@@ -28,7 +28,7 @@ unspecified argument of the functions specified in the first
 column of \code{proc_grid}. If a function specified in
 \code{proc_grid} has an argument \code{.truth}, then the corresponding entry in the 
 \code{.truth} column from \code{data_grid} is passed to the \code{.truth} parameter
-or if no column \code{.truth} exist in \code{data_grid}, then all paramters used
+or if no column \code{.truth} exist in \code{data_grid}, then all parameters used
 for the data generation are passed to the \code{.truth} parameter.}
 
 \item{replications}{number of replications for the simulation}
@@ -41,7 +41,7 @@ generated data sets will be part of the returned object.}
 \item{post_analyze}{this is a convenience function, that is applied directly after the data analyzing function.
 If this function has an argument \code{.truth}, then the corresponding entry in the 
 \code{.truth} column from \code{data_grid} is passed to the \code{.truth} parameter
-or if no column \code{.truth} exist in \code{data_grid}, then all paramters used
+or if no column \code{.truth} exist in \code{data_grid}, then all parameters used
 for the data generation are passed to the \code{.truth} parameter.}
 
 \item{summary_fun}{named list of univariate function to summarize the results (numeric or logical) over
@@ -116,7 +116,9 @@ pg <- expand_tibble(proc = c("rng", "median", "length"))
 
 eval_tibbles(dg, pg,rep = 2, simplify=FALSE)
 eval_tibbles(dg, pg,rep = 2)
-eval_tibbles(dg, pg,rep = 2, post_analyze = purrr::compose(tibble::as_tibble, t))
+eval_tibbles(dg, pg,rep = 2, post_analyze = purrr::compose(tibble::as_tibble, t, identity))
+# Note, identity in the post_analyze-parameter is a workaround for a bug that was 
+# introduced in purrr 0.3.0, see https://github.com/tidyverse/purrr/issues/629
 eval_tibbles(dg, pg,rep = 2, summary_fun = list(mean = mean, sd = sd))
 
 regData = function(n, SD){
@@ -144,12 +146,14 @@ presever_rownames = function(mat)
 eg <- eval_tibbles(
   expand_tibble(fun="regData", n=5L, SD=1:2),
   expand_tibble(proc="lm", formula=c("y~x", "y~I(x^2)")),
-  post_analyze = purrr::compose(presever_rownames, coef, summary),
+  post_analyze = purrr::compose(presever_rownames, coef, summary, identity),
   #post_analyze = broom::tidy, # is a nice out of the box alternative
   summary_fun = list(mean = mean, sd = sd),
   group_for_summary = "term",
   replications=3
 )
+# Note, identity in the post_analyze-parameter is a workaround for a bug that was 
+# introduced in purrr 0.3.0, see https://github.com/tidyverse/purrr/issues/629
 tidyr::unnest(eg$simulation)
 
 dg <- expand_tibble(fun = "rexp", rate = c(10, 100), n = c(50L, 100L)) 

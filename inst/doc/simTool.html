@@ -11,7 +11,7 @@
 
 <meta name="author" content="Marsel Scheer" />
 
-<meta name="date" content="2019-02-02" />
+<meta name="date" content="2019-03-06" />
 
 <title>The simTool package: Facilitate simulations</title>
 
@@ -1481,7 +1481,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">The simTool package: Facilitate simulations</h1>
 <h4 class="author"><em>Marsel Scheer</em></h4>
-<h4 class="date"><em>2019-02-02</em></h4>
+<h4 class="date"><em>2019-03-06</em></h4>
 
 </div>
 
@@ -1536,9 +1536,9 @@ eval_tibbles(
 Number of data generating functions: 2
 Number of analyzing procedures: 2
 Number of replications: 3
-Estimated replications per hour: 48520
-Start of the simulation: 2019-02-02 21:29:44
-End of the simulation: 2019-02-02 21:29:44</code></pre>
+Estimated replications per hour: 250948
+Start of the simulation: 2019-03-06 19:37:47
+End of the simulation: 2019-03-06 19:37:47</code></pre>
 </div>
 <div id="introduction" class="section level1">
 <h1><span class="header-section-number">2</span> Introduction</h1>
@@ -1621,9 +1621,9 @@ eg</code></pre>
 Number of data generating functions: 2
 Number of analyzing procedures: 1
 Number of replications: 2
-Estimated replications per hour: 58074978
-Start of the simulation: 2019-02-02 21:29:45
-End of the simulation: 2019-02-02 21:29:45</code></pre>
+Estimated replications per hour: 62010243
+Start of the simulation: 2019-03-06 19:37:47
+End of the simulation: 2019-03-06 19:37:47</code></pre>
 <p>As you can see, the function always estimates the number of replications that can be done in one hour.</p>
 <div id="parameter-replications" class="section level2">
 <h2><span class="header-section-number">5.1</span> Parameter <em>replications</em></h2>
@@ -1642,9 +1642,9 @@ eg</code></pre>
 Number of data generating functions: 2
 Number of analyzing procedures: 1
 Number of replications: 3
-Estimated replications per hour: 65271589
-Start of the simulation: 2019-02-02 21:29:45
-End of the simulation: 2019-02-02 21:29:45</code></pre>
+Estimated replications per hour: 67308295
+Start of the simulation: 2019-03-06 19:37:47
+End of the simulation: 2019-03-06 19:37:47</code></pre>
 </div>
 <div id="parameter-discard_generated_data" class="section level2">
 <h2><span class="header-section-number">5.2</span> Parameter <em>discard_generated_data</em></h2>
@@ -1687,9 +1687,9 @@ eval_tibbles(
 Number of data generating functions: 3
 Number of analyzing procedures: 2
 Number of replications: 1000
-Estimated replications per hour: 38564864
-Start of the simulation: 2019-02-02 21:29:45
-End of the simulation: 2019-02-02 21:29:45</code></pre>
+Estimated replications per hour: 38969353
+Start of the simulation: 2019-03-06 19:37:47
+End of the simulation: 2019-03-06 19:37:47</code></pre>
 <pre class="r"><code>eval_tibbles(
   data_grid = dg, proc_grid = pg, replications = 1000,
   summary_fun = list(mean = mean, sd = sd)
@@ -1712,9 +1712,9 @@ End of the simulation: 2019-02-02 21:29:45</code></pre>
 Number of data generating functions: 3
 Number of analyzing procedures: 2
 Number of replications: 1000
-Estimated replications per hour: 30646177
-Start of the simulation: 2019-02-02 21:29:45
-End of the simulation: 2019-02-02 21:29:45</code></pre>
+Estimated replications per hour: 38528455
+Start of the simulation: 2019-03-06 19:37:47
+End of the simulation: 2019-03-06 19:37:48</code></pre>
 <p>Note, by specifying the parameter <em>summary_fun</em> the generated data sets and all individual result objects are discarded. In this example we discard <span class="math inline">\(3 \times 1000\)</span> data sets and <span class="math inline">\(3 \times 1000 \times 2\)</span> individual result objects.</p>
 </div>
 <div id="parameter-post_analyze" class="section level2">
@@ -1739,9 +1739,9 @@ End of the simulation: 2019-02-02 21:29:45</code></pre>
 Number of data generating functions: 2
 Number of analyzing procedures: 2
 Number of replications: 2
-Estimated replications per hour: 836652
-Start of the simulation: 2019-02-02 21:29:45
-End of the simulation: 2019-02-02 21:29:45</code></pre>
+Estimated replications per hour: 843500
+Start of the simulation: 2019-03-06 19:37:48
+End of the simulation: 2019-03-06 19:37:48</code></pre>
 <p>The parameter <em>post_analyze</em> (if specified) is applied directly after the result was generated (see command line 10). Note, <em>purrr::compose</em> can be very handy if your post-analyzing-function can be defined by a few single functions:</p>
 <pre class="r"><code>eval_tibbles(
   expand_tibble(fun = &quot;regData&quot;, n = 5L, SD = 1:2),
@@ -1763,9 +1763,9 @@ End of the simulation: 2019-02-02 21:29:45</code></pre>
 Number of data generating functions: 2
 Number of analyzing procedures: 2
 Number of replications: 2
-Estimated replications per hour: 529927
-Start of the simulation: 2019-02-02 21:29:46
-End of the simulation: 2019-02-02 21:29:46</code></pre>
+Estimated replications per hour: 530476
+Start of the simulation: 2019-03-06 19:37:48
+End of the simulation: 2019-03-06 19:37:48</code></pre>
 <p>Note, the function <em>identity</em> used in <em>compose</em> and passed to the parameter <em>post_analyze</em> is only necessary because a bug was introduced in purrr 0.3.0, see <a href="https://github.com/tidyverse/purrr/issues/629">https://github.com/tidyverse/purrr/issues/629</a>. However, one can assume that this will be solved in a future version of purrr.</p>
 </div>
 <div id="parameter-group_for_summary" class="section level2">
@@ -1805,9 +1805,9 @@ Please use expand_tibble() instead.</code></pre>
 Number of data generating functions: 2
 Number of analyzing procedures: 2
 Number of replications: 3
-Estimated replications per hour: 361439
-Start of the simulation: 2019-02-02 21:29:46
-End of the simulation: 2019-02-02 21:29:46</code></pre>
+Estimated replications per hour: 403733
+Start of the simulation: 2019-03-06 19:37:48
+End of the simulation: 2019-03-06 19:37:48</code></pre>
 <p>In order to summarize the replications it is necessary to additional group the calculations with respect to another variable. This variable can be passed to <em>group_for_summary</em></p>
 <pre class="r"><code>eval_tibbles(
   expandGrid(fun = &quot;regData&quot;, n = 5L, SD = 1:2),
@@ -1844,9 +1844,9 @@ Please use expand_tibble() instead.</code></pre>
 Number of data generating functions: 2
 Number of analyzing procedures: 2
 Number of replications: 3
-Estimated replications per hour: 206763
-Start of the simulation: 2019-02-02 21:29:46
-End of the simulation: 2019-02-02 21:29:46</code></pre>
+Estimated replications per hour: 282068
+Start of the simulation: 2019-03-06 19:37:48
+End of the simulation: 2019-03-06 19:37:48</code></pre>
 </div>
 <div id="parameter-ncpus-and-cluster_seed" class="section level2">
 <h2><span class="header-section-number">5.6</span> Parameter <em>ncpus</em> and <em>cluster_seed</em></h2>
@@ -1867,9 +1867,9 @@ End of the simulation: 2019-02-02 21:29:46</code></pre>
 Number of data generating functions: 3
 Number of analyzing procedures: 2
 Number of replications: 10
-Estimated replications per hour: 90181
-Start of the simulation: 2019-02-02 21:29:47
-End of the simulation: 2019-02-02 21:29:47</code></pre>
+Estimated replications per hour: 89873
+Start of the simulation: 2019-03-06 19:37:49
+End of the simulation: 2019-03-06 19:37:49</code></pre>
 <p>As it is stated in command line 7, the replications are parallelized. In our case, this means that roughly every CPU conducts 5 replications.</p>
 <p>The parameter <em>cluster_seed</em> must be an integer vector of length 6 and serves the same purpose as the function <em>set.seed</em>. By default, <em>cluster_seed</em> equals <em>rep(12345, 6)</em>. Note, in order to reproduce the simulation study it is also necessary that <em>ncpus</em> does not change.</p>
 </div>
@@ -1894,9 +1894,9 @@ eval_tibbles(
 Number of data generating functions: 3
 Number of analyzing procedures: 2
 Number of replications: 10
-Estimated replications per hour: 90778
-Start of the simulation: 2019-02-02 21:29:47
-End of the simulation: 2019-02-02 21:29:48</code></pre>
+Estimated replications per hour: 92045
+Start of the simulation: 2019-03-06 19:37:50
+End of the simulation: 2019-03-06 19:37:50</code></pre>
 <pre class="r"><code>stopCluster(cl)</code></pre>
 <p>As you can see our cluster consists of 3 workers. Hence, this reproduces the results from the last code chunk above. Further note, if the user starts the cluster, the user also has to stop the cluster. A cluster that is created within <em>eval_tibbles</em> by specifying <em>ncpus</em> is also stop within <em>eval_tibbles</em>.</p>
 </div>
@@ -1968,9 +1968,9 @@ eval_tibbles(dg, pg,
 Number of data generating functions: 1
 Number of analyzing procedures: 1
 Number of replications: 10
-Estimated replications per hour: 120497
-Start of the simulation: 2019-02-02 21:29:49
-End of the simulation: 2019-02-02 21:29:49</code></pre>
+Estimated replications per hour: 119244
+Start of the simulation: 2019-03-06 19:37:51
+End of the simulation: 2019-03-06 19:37:51</code></pre>
 <p>Of course, it is possible to set <em>cluster_global_objects=ls()</em>, but then all objects from the global environment are transferred to all workers.</p>
 </div>
 <div id="parameter-envir" class="section level2">
@@ -2004,9 +2004,9 @@ someFunc()</code></pre>
 Number of data generating functions: 1
 Number of analyzing procedures: 2
 Number of replications: 1
-Estimated replications per hour: 2337021
-Start of the simulation: 2019-02-02 21:29:49
-End of the simulation: 2019-02-02 21:29:49
+Estimated replications per hour: 2246280
+Start of the simulation: 2019-03-06 19:37:51
+End of the simulation: 2019-03-06 19:37:51
 --------------------------------------------------
 # A tibble: 2 x 7
   fun       n replications proc        sd   mean   q0.1
@@ -2016,9 +2016,9 @@ End of the simulation: 2019-02-02 21:29:49
 Number of data generating functions: 1
 Number of analyzing procedures: 2
 Number of replications: 1
-Estimated replications per hour: 2617804
-Start of the simulation: 2019-02-02 21:29:49
-End of the simulation: 2019-02-02 21:29:49</code></pre>
+Estimated replications per hour: 2704548
+Start of the simulation: 2019-03-06 19:37:51
+End of the simulation: 2019-03-06 19:37:51</code></pre>
 </div>
 <div id="truth-functionality" class="section level2">
 <h2><span class="header-section-number">5.10</span> .truth-functionality</h2>
@@ -2046,9 +2046,9 @@ eval_tibbles(dg, pg, replications = 10^3, discard_generated_data = TRUE,
 Number of data generating functions: 8
 Number of analyzing procedures: 1
 Number of replications: 1000
-Estimated replications per hour: 1037550
-Start of the simulation: 2019-02-02 21:29:50
-End of the simulation: 2019-02-02 21:29:53</code></pre>
+Estimated replications per hour: 1024517
+Start of the simulation: 2019-03-06 19:37:52
+End of the simulation: 2019-03-06 19:37:55</code></pre>
 <p>If we want to do the analysis for different distrubtions we could modify our post data analyzing function, but we can also simply add a <em>.truth</em>-column to the data generating grid. In this case, the information from the <em>.truth</em>-column is directly passed to the <em>.truth</em>-parameter:</p>
 <pre class="r"><code>dg &lt;- dplyr::bind_rows(
   expand_tibble(fun = c(&quot;rnorm&quot;), mean = 0, n = c(10L, 100L), .truth = qnorm(0.975)),
@@ -2077,9 +2077,9 @@ eval_tibbles(dg, pg, replications = 10^3, discard_generated_data = TRUE,
 Number of data generating functions: 6
 Number of analyzing procedures: 1
 Number of replications: 1000
-Estimated replications per hour: 3132324
-Start of the simulation: 2019-02-02 21:29:53
-End of the simulation: 2019-02-02 21:29:55</code></pre>
+Estimated replications per hour: 3143654
+Start of the simulation: 2019-03-06 19:37:56
+End of the simulation: 2019-03-06 19:37:57</code></pre>
 <p>In the same fashion one could write a data analyzing function with a parameter <em>.truth</em>. To go even a step further, we store the analytic quantile function in the <em>.truth</em> column:</p>
 <pre class="r"><code>dg &lt;- dplyr::bind_rows(
   expand_tibble(fun = c(&quot;rnorm&quot;), mean = 0, n = c(10L, 1000L), 
@@ -2117,9 +2117,9 @@ eval_tibbles(dg, pg, replications = 10^3, discard_generated_data = TRUE,
 Number of data generating functions: 6
 Number of analyzing procedures: 2
 Number of replications: 1000
-Estimated replications per hour: 1577269
-Start of the simulation: 2019-02-02 21:29:55
-End of the simulation: 2019-02-02 21:29:57</code></pre>
+Estimated replications per hour: 1582514
+Start of the simulation: 2019-03-06 19:37:57
+End of the simulation: 2019-03-06 19:37:59</code></pre>
 <p>But one should keep in mind that if one calculates the quantile during the (post) analyzing phase that this is happens on replication level. To be more precise lets look at an excerpt of the pseudo code from the beginning of the vignette:</p>
 <pre class="r"><code>6.  for g in  {g_1, ..., g_k} 
 7.      for r in 1:replications (optionally in a parallel manner) 
@@ -2179,9 +2179,9 @@ et</code></pre>
 Number of data generating functions: 4
 Number of analyzing procedures: 2
 Number of replications: 100000
-Estimated replications per hour: 19013356
-Start of the simulation: 2019-02-02 21:29:58
-End of the simulation: 2019-02-02 21:30:17</code></pre>
+Estimated replications per hour: 18947575
+Start of the simulation: 2019-03-06 19:38:00
+End of the simulation: 2019-03-06 19:38:19</code></pre>
 <pre class="r"><code>et$simulation %&gt;%
   ggplot(aes(x = results, color = interaction(fun, n), fill = interaction(fun, n))) +
   geom_density(alpha = 0.3) +
@@ -2287,9 +2287,9 @@ et</code></pre>
 Number of data generating functions: 3
 Number of analyzing procedures: 4
 Number of replications: 1000
-Estimated replications per hour: 16095
-Start of the simulation: 2019-02-02 21:30:22
-End of the simulation: 2019-02-02 21:34:06</code></pre>
+Estimated replications per hour: 16114
+Start of the simulation: 2019-03-06 19:38:25
+End of the simulation: 2019-03-06 19:42:08</code></pre>
 <p>Finally, we can visualize the summarized results:</p>
 <pre class="r"><code>et$simulation %&gt;%
   ggplot(aes(x = fun, y = value, group = type, fill = type, label = round(value, 2))) +
@@ -2361,9 +2361,9 @@ et</code></pre>
 Number of data generating functions: 3
 Number of analyzing procedures: 4
 Number of replications: 100
-Estimated replications per hour: 80822
-Start of the simulation: 2019-02-02 21:34:08
-End of the simulation: 2019-02-02 21:34:12</code></pre>
+Estimated replications per hour: 84581
+Start of the simulation: 2019-03-06 19:42:10
+End of the simulation: 2019-03-06 19:42:14</code></pre>
 <pre class="r"><code>grps &lt;- et$simulation %&gt;% 
   select(-replications) %&gt;% 
   select(fun:type) %&gt;% 
@@ -2375,8 +2375,14 @@ et$simulation %&gt;%
   group_by_(.dots = grps) %&gt;% 
   summarise(coverage = mean(covered),
             ci_length = mean(ci_length))</code></pre>
+<pre><code>Warning: group_by_() is deprecated. 
+Please use group_by() instead
+
+The &#39;programming&#39; vignette or the tidyeval book can help you
+to program with group_by() : https://tidyeval.tidyverse.org
+This warning is displayed once per session.</code></pre>
 <pre><code># A tibble: 36 x 13
-# Groups:   fun, n, mean, sd, .truth, max, rate, proc, conf.level, R [?]
+# Groups:   fun, n, mean, sd, .truth, max, rate, proc, conf.level, R [12]
    fun       n  mean    sd .truth   max  rate proc      conf.level     R type     coverage ci_length
    &lt;chr&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;
  1 rexp     10    NA    NA   1.73    NA 0.577 bootstra…       0.9    100 boot_ba…     0.76      1.54

@@ -268,8 +268,8 @@ pg <- expand_tibble(proc = c("mean", "median"))
 pg
 
 ## ---- eval = EVAL---------------------------------------------------------------------------------
-et <- eval_tibbles(dg, pg, replications = 10^5, ncpus = 2)
-et
+et <- eval_tibbles(dg, pg, replications = 10^4, ncpus = 2)
+
 et$simulation %>%
   ggplot(aes(x = results, color = interaction(fun, n), fill = interaction(fun, n))) +
   geom_density(alpha = 0.3) +
@@ -405,7 +405,7 @@ grps <- et$simulation %>%
 et$simulation %>% 
   mutate(covered = lower <= .truth & .truth <= upper,
          ci_length = upper - lower) %>% 
-  group_by_(.dots = grps) %>% 
+  group_by(.dots = grps) %>% 
   summarise(coverage = mean(covered),
             ci_length = mean(ci_length))
 

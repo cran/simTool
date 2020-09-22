@@ -257,155 +257,155 @@ if (Sys.getenv("NOT_CRAN") == "true") {
 }
 
 ## ---- eval = EVAL---------------------------------------------------------------------------------
-dg <- dplyr::bind_rows(
-  expand_tibble(fun = c("rnorm"), mean = 1, n = c(10L, 100L)),
-  expand_tibble(fun = c("rexp"), rate = 1, n = c(10L, 100L))
-)
-dg
+#  dg <- dplyr::bind_rows(
+#    expand_tibble(fun = c("rnorm"), mean = 1, n = c(10L, 100L)),
+#    expand_tibble(fun = c("rexp"), rate = 1, n = c(10L, 100L))
+#  )
+#  dg
 
 ## ---- eval = EVAL---------------------------------------------------------------------------------
-pg <- expand_tibble(proc = c("mean", "median"))
-pg
+#  pg <- expand_tibble(proc = c("mean", "median"))
+#  pg
 
 ## ---- eval = EVAL---------------------------------------------------------------------------------
-et <- eval_tibbles(dg, pg, replications = 10^4, ncpus = 2)
-
-et$simulation %>%
-  ggplot(aes(x = results, color = interaction(fun, n), fill = interaction(fun, n))) +
-  geom_density(alpha = 0.3) +
-  facet_wrap(~ proc)
-
-## ---- eval = EVAL---------------------------------------------------------------------------------
-bootstrap_ci <- function(x, conf.level, R = 999) {
-  b <- boot::boot(x, function(d, i) {
-    n <- length(i)
-    c(
-      mean = mean(d[i]),
-      variance = (n - 1) * var(d[i]) / n^2
-    )
-  }, R = R)
-  boot::boot.ci(b, conf = conf.level, type = "all")
-}
+#  et <- eval_tibbles(dg, pg, replications = 10^4, ncpus = 2)
+#  
+#  et$simulation %>%
+#    ggplot(aes(x = results, color = interaction(fun, n), fill = interaction(fun, n))) +
+#    geom_density(alpha = 0.3) +
+#    facet_wrap(~ proc)
 
 ## ---- eval = EVAL---------------------------------------------------------------------------------
-post_analyze <- function(o, .truth) {
-  if (class(o) == "htest") {
-  #post-process the object returned by t.test
-    ci <- o$conf.int
-    return(tibble::tibble(
-      type = "t.test",
-      aspect = c("covered", "ci_length"),
-      value = c(ci[1] <= .truth && .truth <= ci[2], ci[2] - ci[1])
-    ))
-  } else if (class(o) == "bootci") {
-  #post-process the object returned by boot.ci
-    method = c("normal", "basic", "student", "percent", "bca")
-    ret = o[method]
-    lower = unlist(purrr::map(ret, ~dplyr::nth(.x, -2)))
-    upper = sapply(ret, dplyr::last)
-    type = paste("boot", method, sep = "_")
-
-    return(
-      dplyr::bind_rows(
-      tibble::tibble(
-        type = type, 
-        aspect = "covered", 
-        value = as.integer(lower <= .truth & .truth <= upper)),
-      tibble::tibble(
-        type = type, 
-        aspect = "ci_length", 
-        value = upper - lower))
-    )
-  }
-}
+#  bootstrap_ci <- function(x, conf.level, R = 999) {
+#    b <- boot::boot(x, function(d, i) {
+#      n <- length(i)
+#      c(
+#        mean = mean(d[i]),
+#        variance = (n - 1) * var(d[i]) / n^2
+#      )
+#    }, R = R)
+#    boot::boot.ci(b, conf = conf.level, type = "all")
+#  }
 
 ## ---- eval = EVAL---------------------------------------------------------------------------------
-dg <- dplyr::bind_rows(
-  simTool::expand_tibble(fun = "rnorm", n = 10L, mean = 0, sd = sqrt(3), .truth = 0),
-  simTool::expand_tibble(fun = "runif", n = 10L, max = 6, .truth = 3),
-  simTool::expand_tibble(fun = "rexp", n = 10L, rate = 1 / sqrt(3), .truth = sqrt(3))
-)
-dg
+#  post_analyze <- function(o, .truth) {
+#    if (class(o) == "htest") {
+#    #post-process the object returned by t.test
+#      ci <- o$conf.int
+#      return(tibble::tibble(
+#        type = "t.test",
+#        aspect = c("covered", "ci_length"),
+#        value = c(ci[1] <= .truth && .truth <= ci[2], ci[2] - ci[1])
+#      ))
+#    } else if (class(o) == "bootci") {
+#    #post-process the object returned by boot.ci
+#      method = c("normal", "basic", "student", "percent", "bca")
+#      ret = o[method]
+#      lower = unlist(purrr::map(ret, ~dplyr::nth(.x, -2)))
+#      upper = sapply(ret, dplyr::last)
+#      type = paste("boot", method, sep = "_")
+#  
+#      return(
+#        dplyr::bind_rows(
+#        tibble::tibble(
+#          type = type,
+#          aspect = "covered",
+#          value = as.integer(lower <= .truth & .truth <= upper)),
+#        tibble::tibble(
+#          type = type,
+#          aspect = "ci_length",
+#          value = upper - lower))
+#      )
+#    }
+#  }
 
 ## ---- eval = EVAL---------------------------------------------------------------------------------
-pg <- simTool::expand_tibble(
-  proc = c("t.test","bootstrap_ci"),
-  conf.level = c(0.9, 0.95)
-)
-pg
+#  dg <- dplyr::bind_rows(
+#    simTool::expand_tibble(fun = "rnorm", n = 10L, mean = 0, sd = sqrt(3), .truth = 0),
+#    simTool::expand_tibble(fun = "runif", n = 10L, max = 6, .truth = 3),
+#    simTool::expand_tibble(fun = "rexp", n = 10L, rate = 1 / sqrt(3), .truth = sqrt(3))
+#  )
+#  dg
 
 ## ---- eval = EVAL---------------------------------------------------------------------------------
-et <- eval_tibbles(dg, pg,
-  replications = 10^3, ncpus = 2,
-  cluster_global_objects = "post_analyze",
-  post_analyze = post_analyze,
-  summary_fun = list(mean = mean),
-  group_for_summary = c("aspect", "type")
-)
-et
+#  pg <- simTool::expand_tibble(
+#    proc = c("t.test","bootstrap_ci"),
+#    conf.level = c(0.9, 0.95)
+#  )
+#  pg
+
+## ---- eval = EVAL---------------------------------------------------------------------------------
+#  et <- eval_tibbles(dg, pg,
+#    replications = 10^3, ncpus = 2,
+#    cluster_global_objects = "post_analyze",
+#    post_analyze = post_analyze,
+#    summary_fun = list(mean = mean),
+#    group_for_summary = c("aspect", "type")
+#  )
+#  et
 
 ## ---- eval = EVAL, fig.width=13-------------------------------------------------------------------
-et$simulation %>%
-  ggplot(aes(x = fun, y = value, group = type, fill = type, label = round(value, 2))) +
-  geom_col(position = "dodge") +
-  geom_label(position = position_dodge(0.9), size = 3) +
-  theme(legend.position = "bottom") + 
-  facet_grid(aspect ~ conf.level, scales = "free")
+#  et$simulation %>%
+#    ggplot(aes(x = fun, y = value, group = type, fill = type, label = round(value, 2))) +
+#    geom_col(position = "dodge") +
+#    geom_label(position = position_dodge(0.9), size = 3) +
+#    theme(legend.position = "bottom") +
+#    facet_grid(aspect ~ conf.level, scales = "free")
 
 ## ---- eval = EVAL---------------------------------------------------------------------------------
-t_test = function(x, conf.level){
-  tt <- t.test(x, conf.level = conf.level)
-  
-  # unify return
-  tibble::tibble(type = "t.test", lower = tt$conf.int[1], upper = tt$conf.int[2])
-}
-
-bootstrap_ci <- function(x, conf.level, R = 999) {
-  b <- boot::boot(x, function(d, i) {
-    n <- length(i)
-    c(
-      mean = mean(d[i]),
-      variance = (n - 1) * var(d[i]) / n^2
-    )
-  }, R = R)
-  ci <- boot::boot.ci(b, conf = conf.level, type = "all")
-  method = c("normal", "basic", "student", "percent", "bca")
-  ret = ci[method]
-  lower = unlist(purrr::map(ret, ~dplyr::nth(.x, -2)))
-  upper = sapply(ret, dplyr::last)
-  type = paste("boot", method, sep = "_")
-  
-  # unify return
-  tibble::tibble(type = type, lower = lower, upper = upper)
-}
-
-dg <- dplyr::bind_rows(
-  simTool::expand_tibble(fun = "rnorm", n = 10L, mean = 0, sd = sqrt(3), .truth = 0),
-  simTool::expand_tibble(fun = "runif", n = 10L, max = 6, .truth = 3),
-  simTool::expand_tibble(fun = "rexp", n = 10L, rate = 1 / sqrt(3), .truth = sqrt(3))
-)
-
-pg <- simTool::expand_tibble(
-  proc = c("t_test","bootstrap_ci"),
-  conf.level = c(0.9, 0.95)
-) %>% 
-  mutate(R = ifelse(proc == "bootstrap_ci", 100, NA))
-
-et <- eval_tibbles(dg, pg,
-  replications = 10^2, ncpus = 2
-)
-et
+#  t_test = function(x, conf.level){
+#    tt <- t.test(x, conf.level = conf.level)
+#  
+#    # unify return
+#    tibble::tibble(type = "t.test", lower = tt$conf.int[1], upper = tt$conf.int[2])
+#  }
+#  
+#  bootstrap_ci <- function(x, conf.level, R = 999) {
+#    b <- boot::boot(x, function(d, i) {
+#      n <- length(i)
+#      c(
+#        mean = mean(d[i]),
+#        variance = (n - 1) * var(d[i]) / n^2
+#      )
+#    }, R = R)
+#    ci <- boot::boot.ci(b, conf = conf.level, type = "all")
+#    method = c("normal", "basic", "student", "percent", "bca")
+#    ret = ci[method]
+#    lower = unlist(purrr::map(ret, ~dplyr::nth(.x, -2)))
+#    upper = sapply(ret, dplyr::last)
+#    type = paste("boot", method, sep = "_")
+#  
+#    # unify return
+#    tibble::tibble(type = type, lower = lower, upper = upper)
+#  }
+#  
+#  dg <- dplyr::bind_rows(
+#    simTool::expand_tibble(fun = "rnorm", n = 10L, mean = 0, sd = sqrt(3), .truth = 0),
+#    simTool::expand_tibble(fun = "runif", n = 10L, max = 6, .truth = 3),
+#    simTool::expand_tibble(fun = "rexp", n = 10L, rate = 1 / sqrt(3), .truth = sqrt(3))
+#  )
+#  
+#  pg <- simTool::expand_tibble(
+#    proc = c("t_test","bootstrap_ci"),
+#    conf.level = c(0.9, 0.95)
+#  ) %>%
+#    mutate(R = ifelse(proc == "bootstrap_ci", 100, NA))
+#  
+#  et <- eval_tibbles(dg, pg,
+#    replications = 10^2, ncpus = 2
+#  )
+#  et
 
 ## ---- eval = EVAL---------------------------------------------------------------------------------
-grps <- et$simulation %>% 
-  select(-replications) %>% 
-  select(fun:type) %>% 
-  names
-
-et$simulation %>% 
-  mutate(covered = lower <= .truth & .truth <= upper,
-         ci_length = upper - lower) %>% 
-  group_by(.dots = grps) %>% 
-  summarise(coverage = mean(covered),
-            ci_length = mean(ci_length))
+#  grps <- et$simulation %>%
+#    select(-replications) %>%
+#    select(fun:type) %>%
+#    names
+#  
+#  et$simulation %>%
+#    mutate(covered = lower <= .truth & .truth <= upper,
+#           ci_length = upper - lower) %>%
+#    group_by(.dots = grps) %>%
+#    summarise(coverage = mean(covered),
+#              ci_length = mean(ci_length))
 

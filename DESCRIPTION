@@ -1,7 +1,7 @@
 Package: simTool
 Type: Package
 Title: Conduct Simulation Studies with a Minimal Amount of Source Code
-Version: 1.1.7
+Version: 1.1.8
 Authors@R: person("Marsel", "Scheer", role = c("aut", "cre"), email = "scheer@freescience.de")
 Maintainer: Marsel Scheer <scheer@freescience.de>
 Description: Tool for statistical simulations that have two components. 
@@ -15,14 +15,15 @@ Description: Tool for statistical simulations that have two components.
 Depends: R (>= 2.14.0)
 Imports: dplyr (>= 0.7.2), purrr (>= 0.2.3), tidyr (>= 1.0.0), tibble
         (>= 2.0.0), vctrs (>= 0.3.0), parallel, methods
-Suggests: ggplot2, knitr, boot, broom, rmarkdown, tinytest
+Suggests: ggplot2, knitr, boot, broom, rmarkdown, tinytest, lintr,
+        roxygen2, covr
 License: GPL-3
 VignetteBuilder: knitr
-RoxygenNote: 7.1.1
-URL: https://github.com/MarselScheer/simTool
+RoxygenNote: 7.3.2
+URL: https://marselscheer.github.io/simTool/
 BugReports: https://github.com/MarselScheer/simTool/issues
 NeedsCompilation: no
-Packaged: 2020-09-22 15:17:48 UTC; rstudio
+Packaged: 2025-04-09 06:01:29 UTC; rstudio
 Author: Marsel Scheer [aut, cre]
 Repository: CRAN
-Date/Publication: 2020-09-22 16:00:03 UTC
+Date/Publication: 2025-04-09 06:20:02 UTC
